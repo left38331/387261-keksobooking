@@ -91,6 +91,7 @@ for (var i = 0; i < 8; i++) {
  offersList.push(makeNewOffer());
 }
 
+// Шаблон для панели с информацией по жилью
 var lodgeTemplate = document.querySelector('#lodge-template').content;
 
 var pinListElement = document.querySelector('.tokyo__pin-map');
@@ -107,6 +108,10 @@ function translateOfferType (offerType) {
   }
 }
 
+/**
+ * Перевод массива опций жилья из [string] в фрагмент из HTML [<span>]
+ * @param {[string]} features массив опций жилья
+ */
 function features2HTML (features) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < features.length; i++) {
@@ -118,7 +123,10 @@ function features2HTML (features) {
 }
 
 
-
+/**
+ * Генератор HTML из шаблона на основе JS объекта предложения
+ * @param {*} deal Объект JS с полным описанием предложения
+ */
 function renderOffer (deal) {
   var offerElement = lodgeTemplate.cloneNode(true);
 
@@ -135,9 +143,12 @@ function renderOffer (deal) {
   return offerElement;
 }
 
+// DOM элемент первого предложения по жилью
 var firstOffer = renderOffer (offersList[0]);
+// DOM панель подробного описания предложения по жилью
 var dialogPanel = document.querySelector('.dialog__panel');
 
+// Заменяем стандарную панель предложения на первое автомитчески сгенерированное
 dialogPanel.parentNode.replaceChild(firstOffer,dialogPanel);
 
 var dialogTitle = document.querySelector('.dialog__title');
@@ -179,4 +190,5 @@ function fillFragment () {
   return fragment;
 }
 
+// Отрисовываем пины случайных предложений на карте (класс '.tokyo__pin-map')
 pinListElement.appendChild(fillFragment());
