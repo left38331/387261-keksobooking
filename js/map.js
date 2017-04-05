@@ -1,7 +1,25 @@
 'use strict';
 
+/**
+ * Number.prototype.format(n, x, s, c)
+ * 
+ * @param integer n: длина десятичной части
+ * @param integer x: длина целой части
+ * @param mixed   s: разделитель секций
+ * @param mixed   c: десятичный разделитель
+ */
+Number.prototype.format = function(n, x, s, c) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+        num = this.toFixed(Math.max(0, ~~n));
+
+    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};
+
 // количество аватаров = картинки в img/avatars/user**.png
 var NUMBER_OF_AVATARS = 8;
+
+// количество предложений
+var NUMBER_OF_OFFERS = 8;
 
 // Возможные заголовки предложений
 var OFFERS_TITLES = [
@@ -17,21 +35,37 @@ var OFFERS_TITLES = [
 var FEATURES = ['wifi','dishwasher','parking', 'washer', 'elevator', 'conditioner'];
 var HOUSE_TYPES = ['flat', 'house', 'bungalo'];
 
+// Объявляем Массив предложений по проживанию
+var offersList = [];
+
 /**
- * Number.prototype.format(n, x, s, c)
- * 
- * @param integer n: length of decimal
- * @param integer x: length of whole part
- * @param mixed   s: sections delimiter
- * @param mixed   c: decimal delimiter
+ * Функция наполнения массива объектами предложений
+ * @param {*} offers array[js obj] Массив предложений по проживаню
  */
-Number.prototype.format = function(n, x, s, c) {
-    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-        num = this.toFixed(Math.max(0, ~~n));
+function fillOfferList (offers) {
+  for (var i = 0; i < NUMBER_OF_OFFERS; i++) {
+    offers.push(makeNewOffer());
+  }
+  return offers;
+}
 
-    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-};
+// Наполняем наш массив предложениями
+fillOfferList(offersList);
 
+// Шаблон для панели с информацией по жилью
+var lodgeTemplate = document.querySelector('#lodge-template').content;
+
+var pinListElement = document.querySelector('.tokyo__pin-map');
+
+// DOM элемент первого предложения по жилью
+var firstOffer = renderOffer (offersList[0]);
+
+// DOM панель подробного описания предложения по жилью
+var dialogPanel = document.querySelector('.dialog__panel');
+
+// div с картиной аватара в описании предложения
+var dialogTitle = document.querySelector('.dialog__title');
+dialogTitle.querySelector('img').src = offersList[0].author.avatar;
 
 /**
  * Возвращает случайный элемент из массива
@@ -40,7 +74,6 @@ Number.prototype.format = function(n, x, s, c) {
 function pickRandomElem (array) {
   return (array[Math.floor(Math.random() * array.length)]);
 }
-
 
 /**
  * Возвращает случайное целое число между min (включительно) и max (включительно)
@@ -53,7 +86,7 @@ function getRandomInt(min, max) {
 
 // Возвращает случайную длину для массива FEATURES (опций)
 function getFeaturesList(features) {
-  return features.slice(0, Math.floor(Math.random() * FEATURES.length));
+  return features.slice(0, Math.floor(Math.random() * features.length));
 }
 
 // Функция генерации экземпляра предложения в Кексобукинг со всеми параметрами
@@ -85,16 +118,7 @@ function makeNewOffer () {
   }
 }
 
-// Наполняем массив объектами предложений
-var offersList = [];
-for (var i = 0; i < 8; i++) {
- offersList.push(makeNewOffer());
-}
 
-// Шаблон для панели с информацией по жилью
-var lodgeTemplate = document.querySelector('#lodge-template').content;
-
-var pinListElement = document.querySelector('.tokyo__pin-map');
 
 /**
  * Передать русское название типа жилья
@@ -143,17 +167,8 @@ function renderOffer (deal) {
   return offerElement;
 }
 
-// DOM элемент первого предложения по жилью
-var firstOffer = renderOffer (offersList[0]);
-// DOM панель подробного описания предложения по жилью
-var dialogPanel = document.querySelector('.dialog__panel');
-
 // Заменяем стандарную панель предложения на первое автомитчески сгенерированное
-dialogPanel.parentNode.replaceChild(firstOffer,dialogPanel);
-
-var dialogTitle = document.querySelector('.dialog__title');
-dialogTitle.querySelector('img').src = offersList[0].author.avatar;
-
+dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
 
 /**
  * Функция генерирует пин на карте (div элемент с вложенным img)
@@ -167,12 +182,13 @@ function renderPin (offer) {
 
   var imgElement = document.createElement('img');
   imgElement.src = offer.author.avatar;
+  imgElement.tabIndex = 0; // для возможности выделять по tab
   imgElement.className = 'rounded';
   imgElement.width = '40';
   imgElement.height = '40';
 
-  //pinElement.insertAdjacentHTML('beforeend', imgElement); //так почему-то не работает
-  pinElement.appendChild(imgElement);
+  pinElement.insertAdjacentHTML('beforeend', imgElement.outerHTML);
+  //pinElement.appendChild(imgElement);
   //debugger;
   return pinElement;
 }
@@ -183,7 +199,7 @@ function renderPin (offer) {
  */
 function fillFragment () {
   var fragment = document.createDocumentFragment();
-  for (i = 0; i < 8; i++) {
+  for (var i = 0; i < 8; i++) {
     fragment.appendChild(renderPin(offersList[i]));
   }
 
@@ -192,3 +208,96 @@ function fillFragment () {
 
 // Отрисовываем пины случайных предложений на карте (класс '.tokyo__pin-map')
 pinListElement.appendChild(fillFragment());
+
+// --------------------------------------------------------------
+// Делаем обработчики событий
+// --------------------------------------------------------------
+var dialogClose = dialogTitle.querySelector('.dialog__close');
+var dialogForm = document.querySelector('.dialog');
+var pinElements = document.getElementsByClassName('pin');
+var clickedElement = null; // объявляем выбранный элемент на странице (пин)
+var ENTER_KEY_CODE = 13;
+var ESC_KEY_CODE = 27;
+
+console.log('Количество пинов: ' + pinElements.length);
+
+document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
+ 
+function pinClickHandler (evt) {
+  //console.log(evt);
+  //debugger;
+
+  // убираем класс 'pin--active' с ранее активного пина
+  if (clickedElement) {
+    clickedElement.classList.remove('pin--active');
+  }
+
+  // добавляем класс 'pin--active' выбранному пину
+  clickedElement = evt.currentTarget;
+  clickedElement.classList.add('pin--active');
+
+  // Отображаем панель с информацией по выбранному пину
+  // номер требуемого объекта определяем по пину с классом 'pin--active'
+  for (var i = 1; i < pinElements.length; i++) {
+    if (pinElements[i].classList.contains('pin--active')) {
+      //console.log('Active pin number is ' + (i - 1));
+      
+      // обновляем панель с информацией по объекту
+      // не могу использовать ранее объявленный dialogPanel, видимо после использования appendChild
+      dialogForm.replaceChild(renderOffer (offersList[i - 1]), document.querySelector('.dialog__panel'));
+      dialogTitle.querySelector('img').src = offersList[i - 1].author.avatar;
+    }
+  }
+
+  dialogForm.style.display = 'block';
+  document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
+  //console.log('executed!');
+}
+
+/**
+ * Функция проверки нажатия ESCAPE клавиши
+ * @param {*} evt событие
+ */
+function onEscPress(evt) {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    closeDialogPanel();
+  }
+}
+
+/**
+ * Функция закрытия панели с информацией по объекту
+ */
+function closeDialogPanel() {
+  dialogForm.style.display = 'none';
+  clickedElement.classList.remove('pin--active');
+  document.removeEventListener('keydown', onEscPress); // убираем EventListener на ESC
+}
+
+// добавляем EventListener на каждый из пинов (class='pin')
+for (var i = 0; i < pinElements.length; i++) {
+  if (!pinElements[i].classList.contains('pin__main')){
+    pinElements[i].addEventListener('click', pinClickHandler, false);
+    pinElements[i].addEventListener('keydown', function (evt) {
+      if (isActivationEvent(evt)) {
+        console.log('pressed');
+        pinClickHandler(evt);
+      };
+    });
+  }
+}
+
+ function isActivationEvent(evt) {
+   return evt.keyCode === ENTER_KEY_CODE;
+ }
+
+// EventListener для закрытия панели описания объекта
+dialogClose.addEventListener('click', function() {
+  //dialogDialog.classList.add('invisible'); //альтернативный вариант
+  dialogForm.style.display = 'none';
+  
+  // убираем выделение с активного пина, но только если такой существует
+  if (clickedElement) {
+    clickedElement.classList.remove('pin--active');
+  }
+
+});
