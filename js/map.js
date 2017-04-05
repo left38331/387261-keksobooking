@@ -275,13 +275,15 @@ function closeDialogPanel() {
 
 // добавляем EventListener на каждый из пинов (class='pin')
 for (var i = 0; i < pinElements.length; i++) {
-  pinElements[i].addEventListener('click', pinClickHandler, false); 
-  pinElements[i].addEventListener('keydown', function(evt) {
-    if (isActivationEvent(evt)) {
-      console.log('pressed');
-      pinClickHandler(evt);
-    };
-  });
+  if (!pinElements[i].classList.contains('pin__main')){
+    pinElements[i].addEventListener('click', pinClickHandler, false);
+    pinElements[i].addEventListener('keydown', function (evt) {
+      if (isActivationEvent(evt)) {
+        console.log('pressed');
+        pinClickHandler(evt);
+      };
+    });
+  }
 }
 
  function isActivationEvent(evt) {
