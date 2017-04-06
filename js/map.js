@@ -219,7 +219,10 @@ var clickedElement = null; // объявляем выбранный элемен
 var ENTER_KEY_CODE = 13;
 var ESC_KEY_CODE = 27;
 
-console.log('Количество пинов: ' + pinElements.length);
+// Добавляем класс 'pin--active' первому пину, потому что он отображается в начале
+pinElements[1].classList.add('pin--active');
+
+//console.log('Количество пинов: ' + pinElements.length);
 
 document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
  
@@ -301,3 +304,57 @@ dialogClose.addEventListener('click', function() {
   }
 
 });
+
+
+// -----------------------------------------------------------------
+// Проверка правильности введённых данных
+// -----------------------------------------------------------------
+var checkinSelectElements = document.querySelector('#time');
+var checkoutSelectedElements = document.querySelector('#timeout');
+var priceElement = document.querySelector('#price');
+var typeElement = document.querySelector('#type');
+var roomNumOptioins = document.querySelector('#room_number');
+var capacityOptions = document.querySelector('#capacity');
+
+//console.log(checkinSelectElements.selectedIndex);
+
+checkinSelectElements.addEventListener('click', function() {
+  checkoutSelectedElements.selectedIndex = checkinSelectElements.selectedIndex;
+});
+
+checkoutSelectedElements.addEventListener('click', function() {
+  checkinSelectElements.selectedIndex = checkoutSelectedElements.selectedIndex;
+});
+
+/**
+ * Функция изменения типа жилья в зависимости от цены за ночь
+ * @param {*} evt Событие 
+ */
+function priceOnChangeHandler(evt) {
+  //debugger;
+  var price = evt.srcElement.value;
+  if (price < 1000) {
+    typeElement.selectedIndex = 1;
+  } else if (price < 10000) {
+    typeElement.selectedIndex = 0;
+  } else {
+    typeElement.selectedIndex = 2;
+  }
+}
+
+// Добавляем событие на изменение типа жилья в зависимости от цены за ночь
+priceElement.addEventListener('change', priceOnChangeHandler);
+
+function roomNumOnChangeHandler() {
+  var guestsOK = (roomNumOptioins.selectedIndex === 0) ? false : true;
+  if (guestsOK) {
+    capacityOptions.selectedIndex = 0; // для 3 гостей
+  } else {
+    capacityOptions.selectedIndex = 1; // не для гостей
+  };
+}
+
+// Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
+roomNumOptioins.addEventListener('change', roomNumOnChangeHandler);
+roomNumOnChangeHandler(); // и проверяем разок на старте, чтобы сразу правильно отображать
+
