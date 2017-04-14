@@ -318,24 +318,7 @@ var priceElement = document.querySelector('#price');
 var typeElement = document.querySelector('#type');
 var roomNumOptioins = document.querySelector('#room_number');
 var capacityOptions = document.querySelector('#capacity');
-var titleElement = document.querySelector('#title');
 var formElement = document.querySelector('.notice__form');
-
-// Выводим список всех требований для поля Title, если не удовлетворяет условиям
-// чтобы предупредить пользователя до отправки формы
-titleElement.addEventListener('blur', function () {
-  //debugger;
-  // Проверим валидность поля, используя встроенную в JavaScript функцию checkValidity()
-  if (titleElement.checkValidity() == false) {
-
-    var inputCustomValidation = new window.CustomValidation(); // Создадим объект CustomValidation
-    inputCustomValidation.clearInvalidities(); // Чистим прошлые сообщения
-    inputCustomValidation.checkValidity(titleElement); // Выявим ошибки
-    var customValidityMessage = inputCustomValidation.getInvalidities(); // Получим все сообщения об ошибках
-    titleElement.setCustomValidity(customValidityMessage); // Установим специальное сообщение об ошибке
-
-  } // закончился if
-});
 
 //console.log(checkinSelectElements.selectedIndex);
 
