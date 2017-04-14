@@ -6,20 +6,19 @@ CustomValidation.prototype = {
 
   // Метод, проверяющий валидность
   checkValidity: function(input) {
-
     var validity = input.validity;
 
     if (validity.patternMismatch) {
       this.addInvalidity('This is the wrong pattern for this field');
     }
 
-    if (validity.rangeOverflow) {
-      var max = input.getAttribute('maxlenght');
+    if (validity.tooLong) {
+      var max = input.getAttribute('maxlength');
       this.addInvalidity('The maximum value should be ' + max);
     }
 
-    if (validity.rangeUnderflow) {
-      var min = input.getAttribute('minlenght');
+    if (validity.tooShort) {
+      var min = input.getAttribute('minlength');
       this.addInvalidity('The minimum value should be ' + min);
     }
 
