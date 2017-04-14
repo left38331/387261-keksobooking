@@ -6,20 +6,15 @@ CustomValidation.prototype = {
 
   // Метод, проверяющий валидность
   checkValidity: function(input) {
-    var validity = input.validity;
-
-    if (validity.patternMismatch) {
-      this.addInvalidity('This is the wrong pattern for this field');
+    //var validity = input.validity;
+    
+    var min = input.getAttribute('minlength');
+    if (min) {      
+      this.addInvalidity('Минимальная длина строки = ' + min);
     }
-
-    if (validity.tooLong) {
-      var max = input.getAttribute('maxlength');
-      this.addInvalidity('The maximum value should be ' + max);
-    }
-
-    if (validity.tooShort) {
-      var min = input.getAttribute('minlength');
-      this.addInvalidity('The minimum value should be ' + min);
+    var max = input.getAttribute('maxlength');
+    if (max) {
+      this.addInvalidity('Максимальная длина строки = ' + max);
     }
 
   },
@@ -32,6 +27,11 @@ CustomValidation.prototype = {
   // Получаем общий текст сообщений об ошибках
   getInvalidities: function() {
     return this.invalidities.join('. \n');
+  },
+
+  // Очищаем список invalidities
+  clearInvalidities: function() {
+    return this.invalidities.length = 0;
   }
 };
 

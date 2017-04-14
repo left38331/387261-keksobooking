@@ -329,8 +329,8 @@ titleElement.addEventListener('blur', function () {
   if (titleElement.checkValidity() == false) {
 
     var inputCustomValidation = new window.CustomValidation(); // Создадим объект CustomValidation
+    inputCustomValidation.clearInvalidities(); // Чистим прошлые сообщения
     inputCustomValidation.checkValidity(titleElement); // Выявим ошибки
-    debugger;
     var customValidityMessage = inputCustomValidation.getInvalidities(); // Получим все сообщения об ошибках
     titleElement.setCustomValidity(customValidityMessage); // Установим специальное сообщение об ошибке
 
