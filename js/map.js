@@ -3,6 +3,7 @@
 
 var pinListElement = document.querySelector('.tokyo__pin-map');
 
+
 // DOM панель подробного описания предложения по жилью
 var dialogPanel = document.querySelector('.dialog__panel');
 
@@ -138,6 +139,7 @@ dialogClose.addEventListener('click', function () {
   }
 
 });
+
 
 
 
