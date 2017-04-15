@@ -15,6 +15,22 @@ Number.prototype.format = function(n, x, s, c) {
     return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 };
 
+
+
+// Шаблон для панели с информацией по жилью
+var lodgeTemplate = document.querySelector('#lodge-template').content;
+
+var pinListElement = document.querySelector('.tokyo__pin-map');
+
+
+
+// DOM панель подробного описания предложения по жилью
+var dialogPanel = document.querySelector('.dialog__panel');
+
+// div с картиной аватара в описании предложения
+var dialogTitle = document.querySelector('.dialog__title');
+
+
 // количество аватаров = картинки в img/avatars/user**.png
 var NUMBER_OF_AVATARS = 8;
 
@@ -52,42 +68,10 @@ function fillOfferList (offers) {
 // Наполняем наш массив предложениями
 fillOfferList(offersList);
 
-// Шаблон для панели с информацией по жилью
-var lodgeTemplate = document.querySelector('#lodge-template').content;
-
-var pinListElement = document.querySelector('.tokyo__pin-map');
-
 // DOM элемент первого предложения по жилью
 var firstOffer = renderOffer (offersList[0]);
 
-// DOM панель подробного описания предложения по жилью
-var dialogPanel = document.querySelector('.dialog__panel');
-
-// div с картиной аватара в описании предложения
-var dialogTitle = document.querySelector('.dialog__title');
 dialogTitle.querySelector('img').src = offersList[0].author.avatar;
-
-/**
- * Возвращает случайный элемент из массива
- * @param {*} array Входной массив строк
- */
-function pickRandomElem (array) {
-  return (array[Math.floor(Math.random() * array.length)]);
-}
-
-/**
- * Возвращает случайное целое число между min (включительно) и max (включительно)
- * @param {*} min 
- * @param {*} max 
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Возвращает случайную длину для массива FEATURES (опций)
-function getFeaturesList(features) {
-  return features.slice(0, Math.floor(Math.random() * features.length));
-}
 
 // Функция генерации экземпляра предложения в Кексобукинг со всеми параметрами
 function makeNewOffer () {
@@ -116,6 +100,28 @@ function makeNewOffer () {
       y: yLocation
     }
   }
+}
+
+/**
+ * Возвращает случайный элемент из массива
+ * @param {*} array Входной массив строк
+ */
+function pickRandomElem (array) {
+  return (array[Math.floor(Math.random() * array.length)]);
+}
+
+/**
+ * Возвращает случайное целое число между min (включительно) и max (включительно)
+ * @param {*} min 
+ * @param {*} max 
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Возвращает случайную длину для массива FEATURES (опций)
+function getFeaturesList(features) {
+  return features.slice(0, Math.floor(Math.random() * features.length));
 }
 
 
@@ -320,15 +326,32 @@ var roomNumOptioins = document.querySelector('#room_number');
 var capacityOptions = document.querySelector('#capacity');
 var formElement = document.querySelector('.notice__form');
 
-//console.log(checkinSelectElements.selectedIndex);
+function init() {
+  checkinSelectElements.addEventListener('click', function () {
+    checkoutSelectedElements.selectedIndex = checkinSelectElements.selectedIndex;
+  });
 
-checkinSelectElements.addEventListener('click', function() {
-  checkoutSelectedElements.selectedIndex = checkinSelectElements.selectedIndex;
-});
+  checkoutSelectedElements.addEventListener('click', function () {
+    checkinSelectElements.selectedIndex = checkoutSelectedElements.selectedIndex;
+  });
 
-checkoutSelectedElements.addEventListener('click', function() {
-  checkinSelectElements.selectedIndex = checkoutSelectedElements.selectedIndex;
-});
+  // Добавляем событие на изменение количества комнат в зависимости от количества возможных гостей
+  capacityOptions.addEventListener('change', guestNumOnChangeHandler);
+
+  // Добавляем событие отслеживания типа жилья - меняем возможную стоимость
+  typeElement.addEventListener('change', typeOnChangeHandler);
+  // прогоняем один раз Handler, чтобы задать правильный placeholder
+  typeOnChangeHandler({ srcElement: { value: 'Квартира' } });
+  priceElement.value = '1000';
+
+  // Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
+  roomNumOptioins.addEventListener('change', roomNumOnChangeHandler);
+  roomNumOnChangeHandler(); // и проверяем разок на старте, чтобы сразу правильно отображать
+}
+
+// добавлем все EventListener и инициируем начальные значения для формы
+init();
+
 
 /**
  * Функция изменения типа жилья в зависимости от цены за ночь
@@ -372,13 +395,6 @@ function typeOnChangeHandler(evt) {
   };
 }
 
-// Добавляем событие отслеживания типа жилья - меняем возможную стоимость
-typeElement.addEventListener('change', typeOnChangeHandler);
-// прогоняем один раз Handler, чтобы задать правильный placeholder
-typeOnChangeHandler({srcElement : {value : 'Квартира'}});
-priceElement.value = '1000';
-
-
 function roomNumOnChangeHandler() {
   var guestsOK = (roomNumOptioins.selectedIndex === 0) ? false : true;
   if (guestsOK) {
@@ -387,11 +403,6 @@ function roomNumOnChangeHandler() {
     capacityOptions.selectedIndex = 1; // не для гостей
   };
 }
-
-
-// Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
-roomNumOptioins.addEventListener('change', roomNumOnChangeHandler);
-roomNumOnChangeHandler(); // и проверяем разок на старте, чтобы сразу правильно отображать
 
 function guestNumOnChangeHandler() {
   var only1room = (capacityOptions.selectedIndex === 1) ? true : false;
@@ -403,8 +414,7 @@ function guestNumOnChangeHandler() {
 }
 
 
-// Добавляем событие на изменение количества комнат в зависимости от количества возможных гостей
-capacityOptions.addEventListener('change', guestNumOnChangeHandler);
+
 
 formElement.addEventListener('submit', function() {
   formElement.reset();
