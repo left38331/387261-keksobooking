@@ -3,10 +3,10 @@
 /**
  * Number.prototype.format(n, x, s, c)
  * 
- * @param integer n: длина десятичной части
- * @param integer x: длина целой части
- * @param mixed   s: разделитель секций
- * @param mixed   c: десятичный разделитель
+ * @param {*} integer n: длина десятичной части
+ * @param {*} integer x: длина целой части
+ * @param {*} mixed   s: разделитель секций
+ * @param {*} mixed   c: десятичный разделитель
  */
 Number.prototype.format = function(n, x, s, c) {
     var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -134,7 +134,7 @@ function translateOfferType (offerType) {
 
 /**
  * Перевод массива опций жилья из [string] в фрагмент из HTML [<span>]
- * @param {[string]} features массив опций жилья
+ * @param {*} string features массив опций жилья
  */
 function features2HTML (features) {
   var fragment = document.createDocumentFragment();
@@ -219,7 +219,13 @@ var clickedElement = null; // объявляем выбранный элемен
 var ENTER_KEY_CODE = 13;
 var ESC_KEY_CODE = 27;
 
-console.log('Количество пинов: ' + pinElements.length);
+
+// Добавляем класс 'pin--active' первому пину, потому что он отображается в начале
+pinElements[1].classList.add('pin--active');
+//debugger;
+clickedElement = pinElements[1]; // текущий выбранный элемент - первый
+
+//console.log('Количество пинов: ' + pinElements.length);
 
 document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
  
@@ -301,3 +307,108 @@ dialogClose.addEventListener('click', function() {
   }
 
 });
+
+
+// -----------------------------------------------------------------
+// Проверка правильности введённых данных
+// -----------------------------------------------------------------
+var checkinSelectElements = document.querySelector('#time');
+var checkoutSelectedElements = document.querySelector('#timeout');
+var priceElement = document.querySelector('#price');
+var typeElement = document.querySelector('#type');
+var roomNumOptioins = document.querySelector('#room_number');
+var capacityOptions = document.querySelector('#capacity');
+var formElement = document.querySelector('.notice__form');
+
+//console.log(checkinSelectElements.selectedIndex);
+
+checkinSelectElements.addEventListener('click', function() {
+  checkoutSelectedElements.selectedIndex = checkinSelectElements.selectedIndex;
+});
+
+checkoutSelectedElements.addEventListener('click', function() {
+  checkinSelectElements.selectedIndex = checkoutSelectedElements.selectedIndex;
+});
+
+/**
+ * Функция изменения типа жилья в зависимости от цены за ночь
+ * @param {*} evt Событие 
+ */
+function priceOnChangeHandler(evt) {
+  //debugger;
+  var price = evt.srcElement.value;
+  if (price < 1000) {
+    typeElement.selectedIndex = 1;
+  } else if (price < 10000) {
+    typeElement.selectedIndex = 0;
+  } else {
+    typeElement.selectedIndex = 2;
+  };
+}
+
+// Добавляем событие на изменение типа жилья в зависимости от цены за ночь
+priceElement.addEventListener('change', priceOnChangeHandler);
+
+function typeOnChangeHandler(evt) {
+  //debugger;
+  var accomodationType = evt.srcElement.value;
+  if (accomodationType === 'Лачуга') {
+    priceElement.placeholder = '1 - 999'
+    if (priceElement.value >= 1000) {
+      priceElement.value = 999;
+    };
+  } else if (accomodationType === 'Квартира') {
+    priceElement.placeholder = '1000 - 9999'
+    if (priceElement.value < 1000 && priceElement.value != '') {
+      priceElement.value = 1000;
+    } else if (priceElement.value > 10000) {
+      priceElement.value = 9999;
+    };
+  } else { // if accomodationType === 'Дворец'
+    priceElement.placeholder = 'от 10000'
+    if (priceElement.value < 10000 && priceElement.value != '') {
+      priceElement.value = 10000;
+    };
+  };
+}
+
+// Добавляем событие отслеживания типа жилья - меняем возможную стоимость
+typeElement.addEventListener('change', typeOnChangeHandler);
+// прогоняем один раз Handler, чтобы задать правильный placeholder
+typeOnChangeHandler({srcElement : {value : 'Квартира'}});
+priceElement.value = '1000';
+
+
+function roomNumOnChangeHandler() {
+  var guestsOK = (roomNumOptioins.selectedIndex === 0) ? false : true;
+  if (guestsOK) {
+    capacityOptions.selectedIndex = 0; // для 3 гостей
+  } else {
+    capacityOptions.selectedIndex = 1; // не для гостей
+  };
+}
+
+
+// Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
+roomNumOptioins.addEventListener('change', roomNumOnChangeHandler);
+roomNumOnChangeHandler(); // и проверяем разок на старте, чтобы сразу правильно отображать
+
+function guestNumOnChangeHandler() {
+  var only1room = (capacityOptions.selectedIndex === 1) ? true : false;
+  if (only1room) {
+    roomNumOptioins.selectedIndex = 0; // не для гостей
+  } else {
+    roomNumOptioins.selectedIndex = 1; // установить в 2 комнаты
+  };
+}
+
+
+// Добавляем событие на изменение количества комнат в зависимости от количества возможных гостей
+capacityOptions.addEventListener('change', guestNumOnChangeHandler);
+
+formElement.addEventListener('submit', function() {
+  formElement.reset();
+  priceElement.value = '1000';
+  roomNumOnChangeHandler();
+});
+
