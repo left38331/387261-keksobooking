@@ -41,8 +41,6 @@ var firstOffer = renderOffer (offersList[0]);
 dialogTitle.querySelector('img').src = offersList[0].author.avatar;
 
 
-
-
 // Заменяем стандарную панель предложения на первое автомитчески сгенерированное
 dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
 
@@ -217,6 +215,9 @@ function init() {
   // Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
   roomNumOptioins.addEventListener('change', roomNumOnChangeHandler);
   roomNumOnChangeHandler(); // и проверяем разок на старте, чтобы сразу правильно отображать
+
+  // Добавляем событие на изменение типа жилья в зависимости от цены за ночь
+  priceElement.addEventListener('change', priceOnChangeHandler);
 }
 
 // добавлем все EventListener и инициируем начальные значения для формы
@@ -239,8 +240,7 @@ function priceOnChangeHandler(evt) {
   };
 }
 
-// Добавляем событие на изменение типа жилья в зависимости от цены за ночь
-priceElement.addEventListener('change', priceOnChangeHandler);
+
 
 function typeOnChangeHandler(evt) {
   //debugger;
@@ -282,13 +282,4 @@ function guestNumOnChangeHandler() {
     roomNumOptioins.selectedIndex = 1; // установить в 2 комнаты
   };
 }
-
-
-
-
-formElement.addEventListener('submit', function() {
-  formElement.reset();
-  priceElement.value = '1000';
-  roomNumOnChangeHandler();
-});
 
