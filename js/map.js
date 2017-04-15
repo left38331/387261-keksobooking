@@ -16,10 +16,6 @@ Number.prototype.format = function(n, x, s, c) {
 };
 
 
-
-// Шаблон для панели с информацией по жилью
-var lodgeTemplate = document.querySelector('#lodge-template').content;
-
 var pinListElement = document.querySelector('.tokyo__pin-map');
 
 
@@ -31,41 +27,12 @@ var dialogPanel = document.querySelector('.dialog__panel');
 var dialogTitle = document.querySelector('.dialog__title');
 
 
-// количество аватаров = картинки в img/avatars/user**.png
-var NUMBER_OF_AVATARS = 8;
-
-// количество предложений
-var NUMBER_OF_OFFERS = 8;
-
-// Возможные заголовки предложений
-var OFFERS_TITLES = [
-  'Большая уютная квартира', 
-  'Маленькая неуютная квартира',
-  'Огромный прекрасный дворец', 
-  'Маленький ужасный дворец',
-  'Красивый гостевой домик',
-  'Некрасивый негостеприимный домик', 
-  'Уютное бунгало далеко от моря', 
-  'Неуютное бунгало по колено в воде'
-  ];
-var FEATURES = ['wifi','dishwasher','parking', 'washer', 'elevator', 'conditioner'];
-var HOUSE_TYPES = ['flat', 'house', 'bungalo'];
 
 // Объявляем Массив предложений по проживанию
 var offersList = [];
 
-/**
- * Функция наполнения массива объектами предложений
- * @param {*} offers array[js obj] Массив предложений по проживаню
- */
-function fillOfferList (offers) {
-  for (var i = 0; i < NUMBER_OF_OFFERS; i++) {
-    offers.push(makeNewOffer());
-  }
-  return offers;
-}
-
 // Наполняем наш массив предложениями
+// наполненеие данных описано в data.js
 fillOfferList(offersList);
 
 // DOM элемент первого предложения по жилью
@@ -73,105 +40,8 @@ var firstOffer = renderOffer (offersList[0]);
 
 dialogTitle.querySelector('img').src = offersList[0].author.avatar;
 
-// Функция генерации экземпляра предложения в Кексобукинг со всеми параметрами
-function makeNewOffer () {
-  var randNum = Math.floor(Math.random() * NUMBER_OF_AVATARS) + 1;
-  var xLocation = getRandomInt(300, 900);
-  var yLocation = getRandomInt(100, 500);
-  return {
-    author: {
-      avatar: './img/avatars/user' + ((randNum < 10) ? '0' + randNum : randNum)  + '.png'
-    },
-    offer: {
-      title: pickRandomElem(OFFERS_TITLES),
-      address: '{' + xLocation + '}, {' + yLocation + '}',
-      price: getRandomInt(1000, 1000000).format(0, 3, ' ', '.'),
-      type: pickRandomElem(HOUSE_TYPES),
-      rooms: getRandomInt(1, 5),
-      guests: getRandomInt(1, 50),
-      checkin: pickRandomElem(['12:00', '13:00', '14:00']),
-      checkout: pickRandomElem(['12:00', '13:00', '14:00']),
-      features: getFeaturesList(FEATURES),
-      description: '',
-      photos: []
-    },
-    location: {
-      x: xLocation,
-      y: yLocation
-    }
-  }
-}
-
-/**
- * Возвращает случайный элемент из массива
- * @param {*} array Входной массив строк
- */
-function pickRandomElem (array) {
-  return (array[Math.floor(Math.random() * array.length)]);
-}
-
-/**
- * Возвращает случайное целое число между min (включительно) и max (включительно)
- * @param {*} min 
- * @param {*} max 
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Возвращает случайную длину для массива FEATURES (опций)
-function getFeaturesList(features) {
-  return features.slice(0, Math.floor(Math.random() * features.length));
-}
 
 
-
-/**
- * Передать русское название типа жилья
- */
-function translateOfferType (offerType) {
-    switch (offerType) {
-    case HOUSE_TYPES[0]: return 'Квартира';
-    case HOUSE_TYPES[1]: return 'Бунгало';
-    case HOUSE_TYPES[2]: return 'Дом';
-    default: return 'Unknown type';
-  }
-}
-
-/**
- * Перевод массива опций жилья из [string] в фрагмент из HTML [<span>]
- * @param {*} string features массив опций жилья
- */
-function features2HTML (features) {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < features.length; i++) {
-    var featureElement = document.createElement('span');
-    featureElement.className = 'feature__image feature__image--' + features[i];
-    fragment.appendChild(featureElement);
-  }
-  return fragment;
-}
-
-
-/**
- * Генератор HTML из шаблона на основе JS объекта предложения
- * @param {*} deal Объект JS с полным описанием предложения
- */
-function renderOffer (deal) {
-  var offerElement = lodgeTemplate.cloneNode(true);
-
-  offerElement.querySelector('.lodge__title').textContent = deal.offer.title;
-  offerElement.querySelector('.lodge__address').textContent = deal.offer.address;
-  offerElement.querySelector('.lodge__price').textContent = deal.offer.price + ' $/ночь';
-  offerElement.querySelector('.lodge__type').textContent = translateOfferType(deal.offer.type);
-  offerElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + deal.offer.guests + 'гостей в ' + deal.offer.rooms + ' комнатах';
-  offerElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout;
-  offerElement.querySelector('.lodge__features').appendChild(features2HTML(deal.offer.features));
-  offerElement.querySelector('.lodge__description').textContent = deal.offer.description;
-  offerElement.querySelector('.lodge__photos').textContent = deal.offer.photos;
-
-  return offerElement;
-}
 
 // Заменяем стандарную панель предложения на первое автомитчески сгенерированное
 dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
