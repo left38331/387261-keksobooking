@@ -13,9 +13,6 @@ window.form = (function (window, document) {
   var roomNumOptioins = document.querySelector('#room_number');
   var capacityOptions = document.querySelector('#capacity');
 
-  // добавлем все EventListener и инициируем начальные значения для формы
-  init();
-
   function init() {
     checkinSelectElements.addEventListener('click', function () {
       checkoutSelectedElements.selectedIndex = checkinSelectElements.selectedIndex;
@@ -97,5 +94,8 @@ window.form = (function (window, document) {
     } else {
       roomNumOptioins.selectedIndex = 1; // установить в 2 комнаты
     };
-  }  
+  }
+
+  // добавлем все EventListener и инициируем начальные значения для формы
+  init();
 })(window, document);
