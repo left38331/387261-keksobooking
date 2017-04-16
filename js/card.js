@@ -43,7 +43,7 @@ window.card = (function (window, document) {
     offerElement.querySelector('.lodge__address').textContent = deal.offer.address;
     offerElement.querySelector('.lodge__price').textContent = deal.offer.price + ' $/ночь';
     offerElement.querySelector('.lodge__type').textContent = translateOfferType(deal.offer.type);
-    offerElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + deal.offer.guests + 'гостей в ' + deal.offer.rooms + ' комнатах';
+    offerElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + ' комнатах';
     offerElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout;
     offerElement.querySelector('.lodge__features').appendChild(features2HTML(deal.offer.features));
     offerElement.querySelector('.lodge__description').textContent = deal.offer.description;
@@ -52,7 +52,45 @@ window.card = (function (window, document) {
     return offerElement;
   }
 
+  function prepareOfferParams(deal, cb) {
+    var title = deal.offer.title;
+    var address = deal.offer.address;
+    var price = deal.offer.price + ' $/ночь';
+    var type = translateOfferType(deal.offer.type);
+    var guestsRooms = 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + ' комнатах';
+    var checkInTime = 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout;
+    var features = features2HTML(deal.offer.features);
+    var description = deal.offer.description;
+    var photos = deal.offer.photos;
+    
+    cb({
+      title: title,
+      address: address,
+      price: price,
+      type: type,
+      guestsRooms: guestsRooms,
+      checkInTime: checkInTime,
+      features: features,
+      description: description,
+      photos: photos
+    });
+    /*
+    return {
+      title: title,
+      address: address,
+      price: price,
+      type: type,
+      guestsRooms: guestsRooms,
+      checkInTime: checkInTime,
+      featrues: features,
+      description: description,
+      photos: photos
+    };
+    */
+  }
+
   return {
-    renderOffer : renderOffer
+    renderOffer : renderOffer,
+    prepareOfferParams: prepareOfferParams
   }
 })(window, document);
