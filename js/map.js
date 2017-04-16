@@ -4,7 +4,7 @@
 var pinListElement = document.querySelector('.tokyo__pin-map');
 
 // DOM панель подробного описания предложения по жилью
-var dialogPanel = document.querySelector('.dialog__panel');
+// var dialogPanel = document.querySelector('.dialog__panel');
 
 // div с картиной аватара в описании предложения
 var dialogTitle = document.querySelector('.dialog__title');
@@ -27,12 +27,14 @@ function init() {
   // наполненеие данных описано в data.js
   window.data.fillOfferList(offersList);
   // DOM элемент первого предложения по жилью
-  var firstOffer = window.card.renderOffer(offersList[0]);
+  //var firstOffer = window.card.renderOffer(offersList[0]);
+
+  window.card.prepareOfferParams(offersList[0], window.showCard);
 
   dialogTitle.querySelector('img').src = offersList[0].author.avatar;
 
   // Заменяем стандарную панель предложения на первое автомитчески сгенерированное
-  dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
+  //dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
 
 
 
@@ -108,14 +110,14 @@ function pinClickHandler(evt) {
 
       // обновляем панель с информацией по объекту
       // не могу использовать ранее объявленный dialogPanel, видимо после использования appendChild
-      dialogForm.replaceChild(window.card.renderOffer(offersList[i - 1]), document.querySelector('.dialog__panel'));
+      window.card.prepareOfferParams(offersList[i - 1], window.showCard);
+      //dialogForm.replaceChild(window.card.renderOffer(offersList[i - 1]), document.querySelector('.dialog__panel'));
       dialogTitle.querySelector('img').src = offersList[i - 1].author.avatar;
     }
   }
 
   dialogForm.style.display = 'block';
   document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
-  //console.log('executed!');
 } // end of pinClickHandler(evt)
 
 /**
