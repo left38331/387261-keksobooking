@@ -4,7 +4,7 @@
 var pinListElement = document.querySelector('.tokyo__pin-map');
 
 // DOM панель подробного описания предложения по жилью
-var dialogPanel = document.querySelector('.dialog__panel');
+// var dialogPanel = document.querySelector('.dialog__panel');
 
 // div с картиной аватара в описании предложения
 var dialogTitle = document.querySelector('.dialog__title');
