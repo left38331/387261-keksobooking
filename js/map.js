@@ -1,5 +1,18 @@
 'use strict';
 
+var dataURL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
+
+var dialogPanel = document.querySelector('.dialog__panel');
+window.lodgeTitle = dialogPanel.querySelector('.lodge__title');
+window.lodgeAddress = dialogPanel.querySelector('.lodge__address');
+window.lodgePrice = dialogPanel.querySelector('.lodge__price');
+window.lodgeType = dialogPanel.querySelector('.lodge__type');
+window.lodgeRoomsAndGuests = dialogPanel.querySelector('.lodge__rooms-and-guests');
+window.lodgeCheckinTime = dialogPanel.querySelector('.lodge__checkin-time');
+window.lodgeFeatures = dialogPanel.querySelector('.lodge__features');
+window.lodgeDescription = dialogPanel.querySelector('.lodge__description');
+window.lodgePhotos = dialogPanel.querySelector('.lodge__photos');
+
 
 var pinListElement = document.querySelector('.tokyo__pin-map');
 
@@ -25,11 +38,11 @@ var ESC_KEY_CODE = 27;
 function init() {
   // Наполняем наш массив предложениями
   // наполненеие данных описано в data.js
-  window.data.fillOfferList(offersList);
+  // window.data.fillOfferList(offersList);
   // DOM элемент первого предложения по жилью
   //var firstOffer = window.card.renderOffer(offersList[0]);
 
-  window.card.prepareOfferParams(offersList[0], window.showCard);
+  window.card.prepareOfferParams(offersList[0], window.show_card.showCard);
 
   dialogTitle.querySelector('img').src = offersList[0].author.avatar;
 
@@ -110,7 +123,7 @@ function pinClickHandler(evt) {
 
       // обновляем панель с информацией по объекту
       // не могу использовать ранее объявленный dialogPanel, видимо после использования appendChild
-      window.card.prepareOfferParams(offersList[i - 1], window.showCard);
+      window.card.prepareOfferParams(offersList[i - 1], window.show_card.showCard);
       //dialogForm.replaceChild(window.card.renderOffer(offersList[i - 1]), document.querySelector('.dialog__panel'));
       dialogTitle.querySelector('img').src = offersList[i - 1].author.avatar;
     }
@@ -146,7 +159,12 @@ function isActivationEvent(evt) {
 }
 
 // инициализация для map.js
-init();
+
+  window.load.load(dataURL, function (data) {
+    //alert(data);
+    offersList = JSON.parse(data);
+    init();
+  });
 
 
 

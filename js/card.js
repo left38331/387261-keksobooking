@@ -32,61 +32,72 @@ window.card = (function (window, document) {
     return fragment;
   }
 
+  function photos2HTML(photos) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < photos.length; i++) {
+      var photoElement = document.createElement('img');
+      photoElement.setAttribute('src', photos[i]);
+      photoElement.setAttribute('alt', 'Lodge photo');
+      photoElement.setAttribute('width','52');
+      photoElement.setAttribute('height','42');
+      fragment.appendChild(photoElement);
+    }
+    return fragment;
+  }
+   
+  /**
+   * Функция создания текстового описания для карточки по жилью на основе js объекта
+   * @param {object} deal Объект, описывающий предложение по жилью
+   */ 
+  function prepFields(deal) {
+    return {
+      title: deal.offer.title,
+      address: deal.offer.address,
+      price: deal.offer.price + ' $/ночь',
+      type: translateOfferType(deal.offer.type),
+      guestsRooms: 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + (deal.offer.rooms === 1) ? ' комнате': ' комнатах',
+      checkInTime: 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout,
+      features: features2HTML(deal.offer.features),
+      description: deal.offer.description,
+      photos: photos2HTML(deal.offer.photos)
+     }
+   }
+
   /**
    * Генератор HTML из шаблона на основе JS объекта предложения
    * @param {*} deal Объект JS с полным описанием предложения
    */
   function renderOffer(deal) {
     var offerElement = lodgeTemplate.cloneNode(true);
-
-    offerElement.querySelector('.lodge__title').textContent = deal.offer.title;
-    offerElement.querySelector('.lodge__address').textContent = deal.offer.address;
-    offerElement.querySelector('.lodge__price').textContent = deal.offer.price + ' $/ночь';
-    offerElement.querySelector('.lodge__type').textContent = translateOfferType(deal.offer.type);
-    offerElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + ' комнатах';
-    offerElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout;
-    offerElement.querySelector('.lodge__features').appendChild(features2HTML(deal.offer.features));
-    offerElement.querySelector('.lodge__description').textContent = deal.offer.description;
-    offerElement.querySelector('.lodge__photos').textContent = deal.offer.photos;
+    var dealText = prepFields(deal);
+    offerElement.querySelector('.lodge__title').textContent = dealText.title;
+    offerElement.querySelector('.lodge__address').textContent = dealText.address;
+    offerElement.querySelector('.lodge__price').textContent = deal.price;
+    offerElement.querySelector('.lodge__type').textContent = dealText.type;
+    offerElement.querySelector('.lodge__rooms-and-guests').textContent = dealText.guestsRooms;
+    offerElement.querySelector('.lodge__checkin-time').textContent = dealText.checkInTime;
+    offerElement.querySelector('.lodge__features').appendChild(dealText.features);
+    offerElement.querySelector('.lodge__description').textContent = dealText.description;
+    offerElement.querySelector('.lodge__photos').appendChild(dealText.photos);
 
     return offerElement;
   }
 
   function prepareOfferParams(deal, cb) {
-    var title = deal.offer.title;
-    var address = deal.offer.address;
-    var price = deal.offer.price + ' $/ночь';
-    var type = translateOfferType(deal.offer.type);
-    var guestsRooms = 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + ' комнатах';
-    var checkInTime = 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout;
-    var features = features2HTML(deal.offer.features);
-    var description = deal.offer.description;
-    var photos = deal.offer.photos;
+
+    var dealText = prepFields(deal);
     
     cb({
-      title: title,
-      address: address,
-      price: price,
-      type: type,
-      guestsRooms: guestsRooms,
-      checkInTime: checkInTime,
-      features: features,
-      description: description,
-      photos: photos
+      title: dealText.title,
+      address: dealText.address,
+      price: dealText.price,
+      type: dealText.type,
+      guestsRooms: dealText.guestsRooms,
+      checkInTime: dealText.checkInTime,
+      features: dealText.features,
+      description: dealText.description,
+      photos: dealText.photos
     });
-    /*
-    return {
-      title: title,
-      address: address,
-      price: price,
-      type: type,
-      guestsRooms: guestsRooms,
-      checkInTime: checkInTime,
-      featrues: features,
-      description: description,
-      photos: photos
-    };
-    */
   }
 
   return {
