@@ -25,8 +25,13 @@ window.mainPin = (function (windows, document) {
     movePinMain();
   }
 
-  // Палим изменение адреса
-  addrInput.addEventListener('input', movePin);
+  // Синхронизируем положение пина на карте с изменением адреса в форме с антидребезгом в 1.5с
+  addrInput.addEventListener('input', function () {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    var timerId = setTimeout(movePin, 1500);
+  });
 
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
