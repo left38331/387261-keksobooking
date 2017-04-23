@@ -4,17 +4,16 @@
 // url - стока в которую записан адрес, по которому будет происходить запрос
 // onLoad - функция обратного вызова, которая срабатывает при успешном выполнении запроса
 window.load = (function (window, document) {
+  //var UNSENT = 0; // начальное состояние
+  var OPENED = 1; // вызван open
+  //var HEADER = 2; // получены заголовки
+  //var LOADING = 3; // загружается тело (получен очередной пакет данных)
+  var DONE = 4; // запрос завершён
+
+  var statusBlock = document.querySelector('.status__block');
+  var statusMessage = statusBlock.querySelector('.status__message');
 
   function load(url, onLoad) {
-
-    //var UNSENT = 0; // начальное состояние
-    var OPENED = 1; // вызван open
-    //var HEADER = 2; // получены заголовки
-    //var LOADING = 3; // загружается тело (получен очередной пакет данных)
-    var DONE = 4; // запрос завершён
-
-    var statusBlock = document.querySelector('.status__block');
-    var statusMessage = statusBlock.querySelector('.status__message');
 
     // создаём новый объект XMLHttpRequest
     var request = new XMLHttpRequest();
@@ -36,52 +35,61 @@ window.load = (function (window, document) {
               changeStatusMessage('error', request.status + ': Плохой запрос!'); //bad request
               break;
             case 403:
-              changeStatusMessage('error', request.status + ': Доступ запрещён!');; //forbidden
+              changeStatusMessage('error', request.status + ': Доступ запрещён!'); //forbidden
               break;
             case 404:
-              changeStatusMessage('error', request.status + ': Страница не найдена!');; // not found
+              changeStatusMessage('error', request.status + ': Страница не найдена!'); // not found
               break;
             case 500:
-              changeStatusMessage('error', request.status + ': Внутрнення ошибка сервера!');; // Internal server error
+              changeStatusMessage('error', request.status + ': Внутрнення ошибка сервера!'); // Internal server error
             default:
-              changeStatusMessage('error', request.status + ': Какая-то ошибка!');; // some error
+              changeStatusMessage('error', request.status + ': Какая-то ошибка!'); // some error
           }
         }
       }
       else {
         if (request.readyState == OPENED) {
           statusBlock.style.display = 'block';
-          changeStatusMessage('loading', 'Загрзука данных...');
+          changeStatusMessage('loading', 'Загрузка данных...');
           // вывести DIV с сообщение о загрузке данных
         }
       }
-    }
-
-    function changeStatusMessage(type, message) {
-      if (type === 'error') {
-        statusMessage.style.color = 'red';
-        statusMessage.style.fontWeight = 'bold';
-        statusMessage.style.animation = 'none';
-        statusMessage.textContent = message;
-      } else if (type === 'loading') {
-        statusMessage.style.color = 'black';
-        statusMessage.style.fontWeight = 'normal';
-        statusMessage.style.animation = 'blinker 1s linear infinite';
-        statusMessage.textContent = message;
-      } else {
-        statusMessage.style.color = 'red';
-        statusMessage.style.fontWeight = 'bold';
-        statusMessage.style.animation = 'none';
-        statusMessage.textContent = 'Выбран неправильный тип';
-      }
-    }
+    };
 
     // конфигурируем GET-запрос на url
     request.open('GET', url, true);
     // отсылаем запрос
     request.send();
   }
+
+
+
+
+  function changeStatusMessage(type, message) {
+    if (type === 'error') {
+      statusMessage.style.color = 'red';
+      statusMessage.style.fontWeight = 'bold';
+      statusMessage.style.animation = 'none';
+      statusMessage.textContent = message;
+    } else if (type === 'loading') {
+      statusMessage.style.color = 'black';
+      statusMessage.style.fontWeight = 'normal';
+      statusMessage.style.animation = 'blinker 1s linear infinite';
+      statusMessage.textContent = message;
+    } else if (type === 'nodata') {
+      statusMessage.style.color = 'black';
+      statusMessage.style.fontWeight = 'bold';
+      statusMessage.style.animation = 'none';
+      statusMessage.textContent = message;
+    } else {
+      statusMessage.style.color = 'red';
+      statusMessage.style.fontWeight = 'bold';
+      statusMessage.style.animation = 'none';
+      statusMessage.textContent = 'Выбран неправильный тип';
+    }
+  }
   return {
-    load: load
+    load: load,
+    changeStatusMessage: changeStatusMessage
   }
 })(window, document);
