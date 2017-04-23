@@ -15,6 +15,7 @@ window.lodgePhotos = dialogPanel.querySelector('.lodge__photos');
 
 
 var pinListElement = document.querySelector('.tokyo__pin-map');
+var pinMain = pinListElement.querySelector('.pin__main');
 
 // DOM панель подробного описания предложения по жилью
 // var dialogPanel = document.querySelector('.dialog__panel');
@@ -35,12 +36,12 @@ var clickedElement = null; // объявляем выбранный элемен
 var ENTER_KEY_CODE = 13;
 var ESC_KEY_CODE = 27;
 
-function init() {
+function init(offersList) {
   // Наполняем наш массив предложениями
   // наполненеие данных описано в data.js
   // window.data.fillOfferList(offersList);
   // DOM элемент первого предложения по жилью
-  //var firstOffer = window.card.renderOffer(offersList[0]);
+  //var firstOffer = window.card.renderOffer(offersList[0]); 
 
   window.card.prepareOfferParams(offersList[0], window.show_card.showCard);
 
@@ -50,9 +51,9 @@ function init() {
   //dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
 
 
-
+  //console.log('Number of pinElements: ' + pinElements.length);
   // Отрисовываем пины случайных предложений на карте (класс '.tokyo__pin-map')
-  pinListElement.appendChild(fillFragment());
+  pinListElement.appendChild(fillFragment(offersList));
 
   // Добавляем класс 'pin--active' первому пину, потому что он отображается в начале
   pinElements[1].classList.add('pin--active');
@@ -66,11 +67,13 @@ function init() {
   // добавляем EventListener на каждый из пинов (class='pin')
   for (var i = 0; i < pinElements.length; i++) {
     if (!pinElements[i].classList.contains('pin__main')) {
-      pinElements[i].addEventListener('click', pinClickHandler, false);
+      pinElements[i].addEventListener('click', function (evt) {
+        pinClickHandler(offersList, evt)
+      }
+      , false);
       pinElements[i].addEventListener('keydown', function (evt) {
         if (isActivationEvent(evt)) {
-          console.log('pressed');
-          pinClickHandler(evt);
+          pinClickHandler(offersList, evt);
         };
       });
     }
@@ -93,16 +96,16 @@ function init() {
  * Функция заполнения блока DOM-элементами используя renderPin(offersList[i]) из pin.js
  * @return {fragment}
  */
-function fillFragment() {
+function fillFragment(offers) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < 8; i++) {
-    fragment.appendChild(window.pins.renderPin(offersList[i]));
+  for (var i = 0; i < offers.length; i++) {
+    fragment.appendChild(window.pins.renderPin(offers[i]));
   }
 
   return fragment;
 }
 
-function pinClickHandler(evt) {
+function pinClickHandler(offersList, evt) {
   //console.log(evt);
   //debugger;
 
@@ -122,14 +125,14 @@ function pinClickHandler(evt) {
       //console.log('Active pin number is ' + (i - 1));
 
       // обновляем панель с информацией по объекту
-      // не могу использовать ранее объявленный dialogPanel, видимо после использования appendChild
       window.card.prepareOfferParams(offersList[i - 1], window.show_card.showCard);
       //dialogForm.replaceChild(window.card.renderOffer(offersList[i - 1]), document.querySelector('.dialog__panel'));
       dialogTitle.querySelector('img').src = offersList[i - 1].author.avatar;
     }
   }
 
-  dialogForm.style.display = 'block';
+  removeClass(dialogForm, 'invisible');
+  // dialogForm.style.display = 'block';
   document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
 } // end of pinClickHandler(evt)
 
@@ -147,15 +150,30 @@ function onEscPress(evt) {
  * Функция закрытия панели с информацией по объекту
  */
 function closeDialogPanel() {
-  dialogForm.style.display = 'none';
+  //dialogForm.style.display = 'none'; // прошая реализация
+  addClass(dialogForm, 'invisible');
   clickedElement.classList.remove('pin--active');
   document.removeEventListener('keydown', onEscPress); // убираем EventListener на ESC
 }
 
 
-
 function isActivationEvent(evt) {
   return evt.keyCode === ENTER_KEY_CODE;
+}
+
+function addClass(el, className) {
+  if (el.classList)
+    el.classList.add(className)
+  else if (!hasClass(el, className)) el.className += " " + className
+}
+
+function removeClass(el, className) {
+  if (el.classList)
+    el.classList.remove(className)
+  else if (hasClass(el, className)) {
+    var reg = new RegExp('(\\s|^)' + className + '(\\s|$)')
+    el.className = el.className.replace(reg, ' ')
+  }
 }
 
 // инициализация для map.js
@@ -163,7 +181,10 @@ function isActivationEvent(evt) {
   window.load.load(dataURL, function (data) {
     //alert(data);
     offersList = JSON.parse(data);
-    init();
+    // debugger;
+    window.filter.showPins(); // запускам при первичной инициализации
+    window.filter.addEventListenerOnFilterChange(); // активируем addEventListener
+    // init(offersList);
   });
 
 

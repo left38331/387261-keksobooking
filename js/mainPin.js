@@ -13,6 +13,7 @@ window.mainPin = (function (windows, document) {
    * Функция перемещения pin__main в случае изменения адреса
    */
   function movePin() {
+    var lastTimeout;
 
     var xy = addrInput.value.match(/^\d+|\d+\b|\d+(?=\w)/g)
       .map(function (v) { return +v; });
@@ -22,7 +23,7 @@ window.mainPin = (function (windows, document) {
       pinMain.style.left = (x - 74 / 2) + 'px';
       pinMain.style.top = (y - 94) + 'px';
     }
-    movePinMain();
+    window.debounce(movePinMain);
   }
 
   // Палим изменение адреса
