@@ -1,5 +1,6 @@
 // mainPin.js
 // премещение основного pin'a и синхронизация с координатами
+'use strict'
 
 window.mainPin = (function (windows, document) {
   var pinMain = document.querySelector('.pin__main');
@@ -12,22 +13,24 @@ window.mainPin = (function (windows, document) {
   /**
    * Функция перемещения pin__main в случае изменения адреса
    */
-  function movePin() {
-    var lastTimeout;
-
+  function movePinMain() {
     var xy = addrInput.value.match(/^\d+|\d+\b|\d+(?=\w)/g)
       .map(function (v) { return +v; });
     var x = xy[0];
     var y = xy[1];
-    function movePinMain() {
+
+    if (x <= 1200) {
       pinMain.style.left = (x - 74 / 2) + 'px';
+    }
+    if (y <= 700) {
       pinMain.style.top = (y - 94) + 'px';
     }
-    window.debounce(movePinMain);
   }
 
   // Палим изменение адреса
-  addrInput.addEventListener('input', movePin);
+  addrInput.addEventListener('input', function () {
+    window.debounce(movePinMain);
+  });
 
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -47,8 +50,14 @@ window.mainPin = (function (windows, document) {
         x: moveEvt.clientX,
         y: moveEvt.clientY
       }
-      pinMain.style.top = (pinMain.offsetTop - shift.y) + 'px';
-      pinMain.style.left = (pinMain.offsetLeft - shift.x) + 'px';
+      if (((pinMain.offsetLeft - shift.x) >= -37) && ((pinMain.offsetLeft - shift.x) <= 1163)) {
+        pinMain.style.left = (pinMain.offsetLeft - shift.x) + 'px';
+      }
+      if (((pinMain.offsetTop - shift.y) >= 0) && ((pinMain.offsetTop - shift.y) <= 606)) {
+        pinMain.style.top = (pinMain.offsetTop - shift.y) + 'px';
+        
+      }      
+      
       setAddress(pinMain.offsetLeft, pinMain.offsetTop);
     }
 

@@ -2,7 +2,7 @@
 // модуль генерации предложений
 'use strict'
 
-window.data = (function (window, document) {
+window.data = (function () {
   // количество предложений
   var NUMBER_OF_OFFERS = 8;
 
@@ -103,6 +103,7 @@ window.data = (function (window, document) {
   }
   return {
     fillOfferList : fillOfferList,
-    randomOffer : makeNewOffer
+    randomOffer : makeNewOffer,
+    getRandomInt: getRandomInt
   }
-})(window, document);
+})();

@@ -4,10 +4,7 @@
 // url - стока в которую записан адрес, по которому будет происходить запрос
 // onLoad - функция обратного вызова, которая срабатывает при успешном выполнении запроса
 window.load = (function (window, document) {
-  //var UNSENT = 0; // начальное состояние
   var OPENED = 1; // вызван open
-  //var HEADER = 2; // получены заголовки
-  //var LOADING = 3; // загружается тело (получен очередной пакет данных)
   var DONE = 4; // запрос завершён
 
   var statusBlock = document.querySelector('.status__block');
@@ -20,8 +17,8 @@ window.load = (function (window, document) {
 
     request.onreadystatechange = function () {
       //Если обмен данными завершен
-      if (request.readyState == DONE) {
-        if (request.status == 200) {
+      if (request.readyState === DONE) {
+        if (request.status === 200) {
           statusBlock.style.display = 'none';
           // передаём управление в onLoad
           onLoad(request.responseText);
@@ -50,8 +47,7 @@ window.load = (function (window, document) {
       else {
         if (request.readyState == OPENED) {
           statusBlock.style.display = 'block';
-          changeStatusMessage('loading', 'Загрузка данных...');
-          // вывести DIV с сообщение о загрузке данных
+          changeStatusMessage('loading', 'Загрузка данных...'); // выводим DIV с сообщением о загрузке данных
         }
       }
     };
@@ -61,9 +57,6 @@ window.load = (function (window, document) {
     // отсылаем запрос
     request.send();
   }
-
-
-
 
   function changeStatusMessage(type, message) {
     if (type === 'error') {

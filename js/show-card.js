@@ -1,7 +1,7 @@
 // show-card.js
 'use strict'
 
-window.show_card = (function(window, document) { 
+window.show_card = (function(window) { 
 
 function showCard(offer) {
   window.lodgeTitle.textContent = offer.title;
@@ -19,4 +19,4 @@ function showCard(offer) {
 return {
   showCard: showCard
 }
-})(window, document);
+})(window);
