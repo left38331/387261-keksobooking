@@ -21,8 +21,7 @@ window.pins = (function (window, document) {
     imgElement.height = '40';
 
     pinElement.insertAdjacentHTML('beforeend', imgElement.outerHTML);
-    //pinElement.appendChild(imgElement);
-    //debugger;
+
     return pinElement;
   }
   return {
