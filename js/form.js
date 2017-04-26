@@ -30,39 +30,40 @@ window.form = (function (window, document) {
     // Добавляем событие на изменение типа жилья в зависимости от цены за ночь
     function syncPrice2Type(e1, e2) {
       var price = e1.value;
-      if (price < 1000) {
-        e2.selectedIndex = 1;
-      } else if (price < 10000) {
-        e2.selectedIndex = 0;
-      } else {
-        e2.selectedIndex = 2;
-      };
+      if ((price < 10000) && (e2.selectedIndex === 2)) { // если цена < 10000 и дворец
+        e2.selectedIndex = 0; // устанавливаем квартиру
+      } else if ((price < 1000) && (e2.selectedIndex === 0)) { // если цена < 1000 и квартира
+        e2.selectedIndex = 1; // устанавливаем в лачугу
+      }
     }
 
-    // Добавляем событие отслеживания типа жилья - меняем возможную стоимость
+    /**
+     * Добавляем событие отслеживания типа жилья - меняем возможную стоимость
+     * @param {*} e1 DOM элемент 1
+     * @param {*} e2 DOM элемент 2
+     */
     function syncType2Price(e1, e2) {
       var accomodationType = e1.value;
       if (accomodationType === 'Лачуга') {
-        e2.placeholder = '1 - 999'
-        if (e2.value >= 1000) {
-          e2.value = 999;
-        };
+        e2.placeholder = 'от 0 р.'
       } else if (accomodationType === 'Квартира') {
-        e2.placeholder = '1000 - 9999'
+        e2.placeholder = 'от 1000 р.'
         if (e2.value < 1000 && e2.value != '') {
           e2.value = 1000;
-        } else if (e2.value > 10000) {
-          e2.value = 9999;
-        };
+        }
       } else { // if accomodationType === 'Дворец'
-        e2.placeholder = 'от 10000'
+        e2.placeholder = 'от 10000 р.'
         if (e2.value < 10000 && e2.value != '') {
           e2.value = 10000;
         };
       };
     }
 
-    // Добавляем событие на изменение количества комнат в зависимости от количества возможных гостей
+    /**
+     * Добавляем событие на изменение количества комнат в зависимости от количества возможных гостей
+     * @param {*} e1 DOM элемент 1
+     * @param {*} e2 DOM элемент 2
+     */
     function syncCapacity2roomNum(e1, e2) {
       var only1room = (e1.selectedIndex === 1) ? true : false;
       if (only1room) {
@@ -72,7 +73,11 @@ window.form = (function (window, document) {
       };
     }
 
-    // Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
+    /**
+     * Добавляем событие на изменение количества возможных гостей в зависимости от количества комнатах
+     * @param {*} e1 DOM элемент 1
+     * @param {*} e2 DOM элемент 2
+     */
     function syncRoomNum2Capacity(e1, e2) {
       var guestsOK = (e1.selectedIndex === 0) ? false : true;
       if (guestsOK) {
@@ -89,10 +94,7 @@ window.form = (function (window, document) {
     syncType2Price(typeElement, priceElement);
     // значение по умолчанию для цены
     priceElement.value = '1000';
-
   }
-
-
 
   // добавлем все EventListener и инициируем начальные значения для формы
   init();

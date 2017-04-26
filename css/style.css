@@ -641,6 +641,7 @@ select option:hover {
 .pin__main {
     width: 75px;
     height: 94px;
+    z-index: 100;
 
     top: 300px;
     left: 600px;
