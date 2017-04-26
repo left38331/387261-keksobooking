@@ -1,4 +1,6 @@
-'use strict';
+// map.js
+// Основной файл - инициализирует отрисовку пинов и привязку событий к устройствам ввода
+'use strict'
 
 var dataURL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
 
@@ -25,6 +27,9 @@ var dialogTitle = document.querySelector('.dialog__title');
 // Объявляем Массив предложений по проживанию
 var offersList = [];
 
+// массив для вывода трёх случайных объявлений при первичной загрузке
+var threeRandomOffers = [];
+
 // --------------------------------------------------------------
 // Делаем обработчики событий
 // --------------------------------------------------------------
@@ -35,42 +40,36 @@ var clickedElement = null; // объявляем выбранный элемен
 var ENTER_KEY_CODE = 13;
 var ESC_KEY_CODE = 27;
 
-function init() {
-  // Наполняем наш массив предложениями
-  // наполненеие данных описано в data.js
-  // window.data.fillOfferList(offersList);
-  // DOM элемент первого предложения по жилью
-  //var firstOffer = window.card.renderOffer(offersList[0]);
+/**
+ * Наполняем наш массив предложениями, передаваемыми аргументом offersList
+ * @param {object} offersList масиив предложений
+ */
+function init(offersList) {
 
   window.card.prepareOfferParams(offersList[0], window.show_card.showCard);
 
   dialogTitle.querySelector('img').src = offersList[0].author.avatar;
 
-  // Заменяем стандарную панель предложения на первое автомитчески сгенерированное
-  //dialogPanel.parentNode.replaceChild(firstOffer, dialogPanel);
-
-
-
   // Отрисовываем пины случайных предложений на карте (класс '.tokyo__pin-map')
-  pinListElement.appendChild(fillFragment());
+  pinListElement.appendChild(fillFragment(offersList));
 
   // Добавляем класс 'pin--active' первому пину, потому что он отображается в начале
   pinElements[1].classList.add('pin--active');
-  //debugger;
-  clickedElement = pinElements[1]; // текущий выбранный элемент - первый
 
-  //console.log('Количество пинов: ' + pinElements.length);
+  clickedElement = pinElements[1]; // текущий выбранный элемент - первый
 
   document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
 
   // добавляем EventListener на каждый из пинов (class='pin')
   for (var i = 0; i < pinElements.length; i++) {
     if (!pinElements[i].classList.contains('pin__main')) {
-      pinElements[i].addEventListener('click', pinClickHandler, false);
+      pinElements[i].addEventListener('click', function (evt) {
+        pinClickHandler(offersList, evt)
+      }
+        , false);
       pinElements[i].addEventListener('keydown', function (evt) {
         if (isActivationEvent(evt)) {
-          console.log('pressed');
-          pinClickHandler(evt);
+          pinClickHandler(offersList, evt);
         };
       });
     }
@@ -78,7 +77,6 @@ function init() {
 
   // EventListener для закрытия панели описания объекта
   dialogClose.addEventListener('click', function () {
-    //dialogDialog.classList.add('invisible'); //альтернативный вариант
     dialogForm.style.display = 'none';
 
     // убираем выделение с активного пина, но только если такой существует
@@ -93,19 +91,16 @@ function init() {
  * Функция заполнения блока DOM-элементами используя renderPin(offersList[i]) из pin.js
  * @return {fragment}
  */
-function fillFragment() {
+function fillFragment(offers) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < 8; i++) {
-    fragment.appendChild(window.pins.renderPin(offersList[i]));
+  for (var i = 0; i < offers.length; i++) {
+    fragment.appendChild(window.pins.renderPin(offers[i]));
   }
 
   return fragment;
 }
 
-function pinClickHandler(evt) {
-  //console.log(evt);
-  //debugger;
-
+function pinClickHandler(offersList, evt) {
   // убираем класс 'pin--active' с ранее активного пина
   if (clickedElement) {
     clickedElement.classList.remove('pin--active');
@@ -119,17 +114,14 @@ function pinClickHandler(evt) {
   // номер требуемого объекта определяем по пину с классом 'pin--active'
   for (var i = 1; i < pinElements.length; i++) {
     if (pinElements[i].classList.contains('pin--active')) {
-      //console.log('Active pin number is ' + (i - 1));
-
       // обновляем панель с информацией по объекту
-      // не могу использовать ранее объявленный dialogPanel, видимо после использования appendChild
       window.card.prepareOfferParams(offersList[i - 1], window.show_card.showCard);
       //dialogForm.replaceChild(window.card.renderOffer(offersList[i - 1]), document.querySelector('.dialog__panel'));
       dialogTitle.querySelector('img').src = offersList[i - 1].author.avatar;
     }
   }
 
-  dialogForm.style.display = 'block';
+  window.removeClass(dialogForm, 'invisible');
   document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
 } // end of pinClickHandler(evt)
 
@@ -147,25 +139,34 @@ function onEscPress(evt) {
  * Функция закрытия панели с информацией по объекту
  */
 function closeDialogPanel() {
-  dialogForm.style.display = 'none';
+  window.addClass(dialogForm, 'invisible');
   clickedElement.classList.remove('pin--active');
   document.removeEventListener('keydown', onEscPress); // убираем EventListener на ESC
 }
-
 
 
 function isActivationEvent(evt) {
   return evt.keyCode === ENTER_KEY_CODE;
 }
 
+/**
+ * Функция выборки трёх случайных предложений из исходного списка предложений
+ * @param {*} offers исходный массив предложений, считываемый по сети
+ */
+function getThreeRandomOffers(offers) {
+  var slicedOffers = offers.slice(); // копия исходного массива
+  for (var i = 0; i <= 2; i++) {
+    var randNum = window.data.getRandomInt(0, slicedOffers.length - 1) // генерируем случайно число
+    threeRandomOffers.push(slicedOffers[randNum]); // вставляем случайный элемент в новый массив из трёх предложений
+    slicedOffers.splice(randNum, 1); // удалём выбранный элемент из копии предложений
+  }
+}
+
 // инициализация для map.js
-
-  window.load.load(dataURL, function (data) {
-    //alert(data);
-    offersList = JSON.parse(data);
-    init();
-  });
-
-
-
-
+window.load.load(dataURL, function (data) {
+  offersList = JSON.parse(data);
+  // при первой загрузке нужно отобразить только первые 3 произвольных варианта
+  getThreeRandomOffers(offersList);
+  init(threeRandomOffers); // отрисовываем три случайных предложения на карте, фильтр игнорируем по тех заданию
+  window.filter.addEventListenerOnFilterChange(); // активируем addEventListener
+});

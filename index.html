@@ -39,27 +39,27 @@
         </select></label>
         <fieldset id="housing_features" class="tokyo__filter-set">
           <label class="feature">
-            <input type="checkbox" name="feature" value="wifi"><span
+            <input type="checkbox" name="feature" value="wifi" data-tooltip='Наличие бесплатного wifi'><span
             class="feature__image  feature__image--wifi"></span>
           </label>
           <label class="feature">
-            <input type="checkbox" name="feature" value="dishwasher"><span
+            <input type="checkbox" name="feature" value="dishwasher" data-tooltip='Наличие посудомоечной машины'><span
             class="feature__image  feature__image--dishwasher"></span>
           </label>
           <label class="feature">
-            <input type="checkbox" name="feature" value="parking"><span
+            <input type="checkbox" name="feature" value="parking" data-tooltip='Наличие парковки'><span
             class="feature__image  feature__image--parking"></span>
           </label>
           <label class="feature">
-            <input type="checkbox" name="feature" value="washer"><span
+            <input type="checkbox" name="feature" value="washer" data-tooltip='Наличие стиральной машины'><span
             class="feature__image  feature__image--washer"></span>
           </label>
           <label class="feature">
-            <input type="checkbox" name="feature" value="elevator"><span
+            <input type="checkbox" name="feature" value="elevator" data-tooltip='Наличие лифта'><span
             class="feature__image  feature__image--elevator"></span>
           </label>
           <label class="feature">
-            <input type="checkbox" name="feature" value="conditioner"><span
+            <input type="checkbox" name="feature" value="conditioner" data-tooltip='Наличие кондиционера'><span
             class="feature__image  feature__image--conditioner"></span>
           </label>
         </fieldset>
@@ -272,8 +272,9 @@
   </div>
 </template>
 
-
+<script src='js/classes.js'></script>
 <script src='js/data.js'></script>
+<script src='js/debounce.js'></script>
 <script src='js/load.js'></script>
 <script src='js/card.js'></script>
 <script src='js/show-card.js'></script>
@@ -282,5 +283,6 @@
 <script src='js/form.js'></script>
 <script src='js/mainPin.js'></script>
 <script src='js/map.js'></script>
+<script src='js/filter.js'></script>
 </body>
 </html>
