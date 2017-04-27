@@ -42,7 +42,7 @@ var ESC_KEY_CODE = 27;
 
 /**
  * Наполняем наш массив предложениями, передаваемыми аргументом offersList
- * @param {object} offersList масиив предложений
+ * @param {object} offers масиив предложений
  */
 function init(offers) {
 
