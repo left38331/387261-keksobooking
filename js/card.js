@@ -51,6 +51,7 @@ window.card = (function (window, document) {
   /**
    * Функция создания текстового описания для карточки по жилью на основе js объекта
    * @param {object} deal Объект, описывающий предложение по жилью
+   * @return {object} описание объекта, подготовленное для вывода в HTML
    */
   function prepareFields(deal) {
     return {
@@ -63,12 +64,13 @@ window.card = (function (window, document) {
       features: features2HTML(deal.offer.features),
       description: deal.offer.description,
       photos: photos2HTML(deal.offer.photos)
-    }
+    };
   }
 
   /**
    * Генератор HTML из шаблона на основе JS объекта предложения
    * @param {*} deal Объект JS с полным описанием предложения
+   * @return {DOM} DOM элемент карточки-описания объекта
    */
   function renderOffer(deal) {
     var offerElement = lodgeTemplate.cloneNode(true);
@@ -107,5 +109,5 @@ window.card = (function (window, document) {
     renderOffer: renderOffer,
     prepareOfferParams: prepareOfferParams,
     translateOfferType: translateOfferType
-  }
+  };
 })(window, document);

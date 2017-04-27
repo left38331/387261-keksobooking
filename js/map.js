@@ -1,6 +1,6 @@
 // map.js
 // Основной файл - инициализирует отрисовку пинов и привязку событий к устройствам ввода
-'use strict'
+'use strict';
 
 var dataURL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
 
@@ -44,14 +44,14 @@ var ESC_KEY_CODE = 27;
  * Наполняем наш массив предложениями, передаваемыми аргументом offersList
  * @param {object} offersList масиив предложений
  */
-function init(offersList) {
+function init(offers) {
 
-  window.card.prepareOfferParams(offersList[0], window.show_card.showCard);
+  window.card.prepareOfferParams(offers[0], window.showCard.showCard);
 
-  dialogTitle.querySelector('img').src = offersList[0].author.avatar;
+  dialogTitle.querySelector('img').src = offers[0].author.avatar;
 
   // Отрисовываем пины случайных предложений на карте (класс '.tokyo__pin-map')
-  pinListElement.appendChild(fillFragment(offersList));
+  pinListElement.appendChild(fillFragment(offers));
 
   // Добавляем класс 'pin--active' первому пину, потому что он отображается в начале
   pinElements[1].classList.add('pin--active');
@@ -64,13 +64,13 @@ function init(offersList) {
   for (var i = 0; i < pinElements.length; i++) {
     if (!pinElements[i].classList.contains('pin__main')) {
       pinElements[i].addEventListener('click', function (evt) {
-        pinClickHandler(offersList, evt)
+        pinClickHandler(offers, evt);
       }
         , false);
       pinElements[i].addEventListener('keydown', function (evt) {
         if (isActivationEvent(evt)) {
-          pinClickHandler(offersList, evt);
-        };
+          pinClickHandler(offers, evt);
+        }
       });
     }
   }
@@ -89,7 +89,8 @@ function init(offersList) {
 
 /**
  * Функция заполнения блока DOM-элементами используя renderPin(offersList[i]) из pin.js
- * @return {fragment}
+ * @param {*} offers список предлжоений
+ * @return {fragment} блок DOM-элементов
  */
 function fillFragment(offers) {
   var fragment = document.createDocumentFragment();
@@ -100,7 +101,7 @@ function fillFragment(offers) {
   return fragment;
 }
 
-function pinClickHandler(offersList, evt) {
+function pinClickHandler(offers, evt) {
   // убираем класс 'pin--active' с ранее активного пина
   if (clickedElement) {
     clickedElement.classList.remove('pin--active');
@@ -115,9 +116,8 @@ function pinClickHandler(offersList, evt) {
   for (var i = 1; i < pinElements.length; i++) {
     if (pinElements[i].classList.contains('pin--active')) {
       // обновляем панель с информацией по объекту
-      window.card.prepareOfferParams(offersList[i - 1], window.show_card.showCard);
-      //dialogForm.replaceChild(window.card.renderOffer(offersList[i - 1]), document.querySelector('.dialog__panel'));
-      dialogTitle.querySelector('img').src = offersList[i - 1].author.avatar;
+      window.card.prepareOfferParams(offers[i - 1], window.showCard.showCard);
+      dialogTitle.querySelector('img').src = offers[i - 1].author.avatar;
     }
   }
 
@@ -156,7 +156,7 @@ function isActivationEvent(evt) {
 function getThreeRandomOffers(offers) {
   var slicedOffers = offers.slice(); // копия исходного массива
   for (var i = 0; i <= 2; i++) {
-    var randNum = window.data.getRandomInt(0, slicedOffers.length - 1) // генерируем случайно число
+    var randNum = window.data.getRandomInt(0, slicedOffers.length - 1); // генерируем случайно число
     threeRandomOffers.push(slicedOffers[randNum]); // вставляем случайный элемент в новый массив из трёх предложений
     slicedOffers.splice(randNum, 1); // удалём выбранный элемент из копии предложений
   }

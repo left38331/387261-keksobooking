@@ -27,14 +27,15 @@ window.data = (function () {
   /**
  * Number.prototype.format(n, x, s, c)
  * 
- * @param {*} integer n: длина десятичной части
- * @param {*} integer x: длина целой части
- * @param {*} mixed   s: разделитель секций
- * @param {*} mixed   c: десятичный разделитель
+ * @param {integer} n: длина десятичной части
+ * @param {integer} x: длина целой части
+ * @param {string}  s: разделитель секций
+ * @param {string}  c: десятичный разделитель
+ * @return {string} отформатированная числовая строка 
  */
   Number.prototype.format = function (n, x, s, c) {
-    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-      num = this.toFixed(Math.max(0, ~~n));
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')';
+    var num = this.toFixed(Math.max(0, ~~n));
 
     return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
   };
@@ -43,6 +44,7 @@ window.data = (function () {
   /**
    * Возвращает случайный элемент из массива
    * @param {*} array Входной массив строк
+   * @return {any} случайный элемент из массива
    */
   function pickRandomElem(array) {
     return (array[Math.floor(Math.random() * array.length)]);
@@ -52,6 +54,7 @@ window.data = (function () {
    * Возвращает случайное целое число между min (включительно) и max (включительно)
    * @param {*} min 
    * @param {*} max 
+   * @return {integer} случайное число из диапазона
    */
   function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -88,12 +91,13 @@ window.data = (function () {
         x: xLocation,
         y: yLocation
       }
-    }
+    };
   }
 
   /**
    * Функция наполнения массива объектами предложений
    * @param {*} offers array[js obj] Массив предложений по проживаню
+   * @return {object} массив предложений
    */
   function fillOfferList(offers) {
     for (var i = 0; i < NUMBER_OF_OFFERS; i++) {
@@ -105,5 +109,5 @@ window.data = (function () {
     fillOfferList: fillOfferList,
     randomOffer: makeNewOffer,
     getRandomInt: getRandomInt
-  }
+  };
 })();
