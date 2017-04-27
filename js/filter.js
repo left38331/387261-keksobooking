@@ -1,8 +1,8 @@
 // filter.js
 // модуль для фильтрации данных по предложениям
-'use strict'
+'use strict';
 
-window.filter = function (window, document) {
+window.filter = (function (window, document) {
   var filters = document.querySelector('.tokyo__filters');
   var allfilters = filters.querySelectorAll('.tokyo__filter');
   var features = filters.querySelectorAll('.feature');
@@ -26,25 +26,26 @@ window.filter = function (window, document) {
 
     // фильтруем по типу жилья
     filteredList = filteredList.filter(function (item) {
-      var filterText = allfilters[0].options[allfilters[0].selectedIndex].text // текст фильтра типа жилья
+      var filterText = allfilters[0].options[allfilters[0].selectedIndex].text; // текст фильтра типа жилья
       if (filterText === 'Любой тип жилья') {
         return true;
-      } 
+      }
       return (window.card.translateOfferType(item.offer.type) === filterText);
     });
 
     // фильтруем по цене
     filteredList = filteredList.filter(function (item) {
-      var selectedPriceRange = allfilters[1].selectedIndex // индекс выбранной опции по стоимости
+      var selectedPriceRange = allfilters[1].selectedIndex; // индекс выбранной опции по стоимости
       switch (selectedPriceRange) {
         case 0: // если от 10000 до 50000
           if (item.offer.price >= 10000 && item.offer.price < 50000) {
             return true;
-          } else return false;
+          }
+          return false;
         case 1: // если до 10000
-          return (item.offer.price < 10000)
+          return (item.offer.price < 10000);
         case 2: // если более 50000
-          return (item.offer.price >= 50000)
+          return (item.offer.price >= 50000);
         default:
           return false;
       }
@@ -52,16 +53,16 @@ window.filter = function (window, document) {
 
     // фильтруем по числу комнат
     filteredList = filteredList.filter(function (item) {
-      var selectedRoomsIndex = allfilters[2].selectedIndex // индекс определят количество комнат
+      var selectedRoomsIndex = allfilters[2].selectedIndex; // индекс определят количество комнат
       switch (selectedRoomsIndex) {
         case 0: // если любое количество комнат
           return true;
         case 1: // одна комната
-          return (item.offer.rooms === 1)
+          return (item.offer.rooms === 1);
         case 2: // две комнаты
-          return (item.offer.rooms === 2)
+          return (item.offer.rooms === 2);
         case 3: // три комнаты или больше полагаю
-          return (item.offer.rooms >= 3)
+          return (item.offer.rooms >= 3);
         default: // чёрт его знает
           return false;
       }
@@ -69,14 +70,14 @@ window.filter = function (window, document) {
 
     // фильтруем по числу гостей
     filteredList = filteredList.filter(function (item) {
-      var selectedGuestsIndex = allfilters[3].selectedIndex // индекс определят количество комнат
+      var selectedGuestsIndex = allfilters[3].selectedIndex; // индекс определят количество комнат
       switch (selectedGuestsIndex) {
         case 0: // если любое количество гостей
           return true;
         case 1: // один гости
-          return (item.offer.guests >= 1)
+          return (item.offer.guests >= 1);
         case 2: // два гостя
-          return (item.offer.guests >= 2)
+          return (item.offer.guests >= 2);
         default: // чёрт его знает
           return false;
       }
@@ -95,7 +96,7 @@ window.filter = function (window, document) {
         return true;
       } else if (compareFeatures(item.offer.features, desiredFeatures)) {
         return true;
-      } 
+      }
       return false;
     });
 
@@ -121,6 +122,7 @@ window.filter = function (window, document) {
 	 * Функция проверки вхождения всех элементов из подмассива subArray в mainArray
 	 * @param {[string]} mainArray основной массив
 	 * @param {[string]} subArray подмассив
+   * @return {boolean} возвращает true или false
 	 */
   function compareFeatures(mainArray, subArray) {
     var isOK = true;
@@ -133,5 +135,5 @@ window.filter = function (window, document) {
   return {
     addEventListenerOnFilterChange: addEventListenerOnFilterChange,
     showPins: showPins
-  }
-}(window, document);
+  };
+})(window, document);

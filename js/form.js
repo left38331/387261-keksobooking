@@ -1,6 +1,6 @@
 // form.js
 // модуль, который работает с формой объявления
-'use strict'
+'use strict';
 
 window.form = (function (window, document) {
   // -----------------------------------------------------------------
@@ -19,13 +19,13 @@ window.form = (function (window, document) {
     window.synchronizeFields(checkoutSelectedElements, checkinSelectElements, syncValues);
     window.synchronizeFields(priceElement, typeElement, syncPrice2Type);
     window.synchronizeFields(typeElement, priceElement, syncType2Price);
-    window.synchronizeFields(capacityOptions, roomNumOptions, syncCapacity2roomNum)
-    window.synchronizeFields(roomNumOptions, capacityOptions, syncRoomNum2Capacity)
+    window.synchronizeFields(capacityOptions, roomNumOptions, syncCapacity2roomNum);
+    window.synchronizeFields(roomNumOptions, capacityOptions, syncRoomNum2Capacity);
 
     // Функция синхронизации времени заезда и выезда
     function syncValues(e1, e2) {
       e2.selectedIndex = e1.selectedIndex;
-    };
+    }
 
     // Добавляем событие на изменение типа жилья в зависимости от цены за ночь
     function syncPrice2Type(e1, e2) {
@@ -45,18 +45,18 @@ window.form = (function (window, document) {
     function syncType2Price(e1, e2) {
       var accomodationType = e1.value;
       if (accomodationType === 'Лачуга') {
-        e2.placeholder = 'от 0 р.'
+        e2.placeholder = 'от 0 р.';
       } else if (accomodationType === 'Квартира') {
-        e2.placeholder = 'от 1000 р.'
-        if (e2.value < 1000 && e2.value != '') {
+        e2.placeholder = 'от 1000 р.';
+        if (e2.value < 1000 && e2.value !== '') {
           e2.value = 1000;
         }
       } else { // if accomodationType === 'Дворец'
-        e2.placeholder = 'от 10000 р.'
-        if (e2.value < 10000 && e2.value != '') {
+        e2.placeholder = 'от 10000 р.';
+        if (e2.value < 10000 && e2.value !== '') {
           e2.value = 10000;
-        };
-      };
+        }
+      }
     }
 
     /**
@@ -70,7 +70,7 @@ window.form = (function (window, document) {
         e2.selectedIndex = 0; // не для гостей
       } else {
         e2.selectedIndex = 1; // установить в 2 комнаты
-      };
+      }
     }
 
     /**
@@ -84,7 +84,7 @@ window.form = (function (window, document) {
         e2.selectedIndex = 0; // для 3 гостей
       } else {
         e2.selectedIndex = 1; // не для гостей
-      };
+      }
     }
 
     // Синхронизируем разок на старте, чтобы сразу правильно отображать

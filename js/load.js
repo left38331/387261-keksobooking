@@ -1,6 +1,6 @@
 // load.js
 // load - отрпавка на сервер запросов с помощью XMLHttpRequest
-'use strict'
+'use strict';
 // url - стока в которую записан адрес, по которому будет происходить запрос
 // onLoad - функция обратного вызова, которая срабатывает при успешном выполнении запроса
 window.load = (function (window, document) {
@@ -16,36 +16,35 @@ window.load = (function (window, document) {
     var request = new XMLHttpRequest();
 
     request.onreadystatechange = function () {
-      //Если обмен данными завершен
+      // Если обмен данными завершен
       if (request.readyState === DONE) {
         if (request.status === 200) {
           statusBlock.style.display = 'none';
           // передаём управление в onLoad
           onLoad(request.responseText);
-        }
-        else { // обрабатываем ошибки
+        } else { // обрабатываем ошибки
           switch (request.status) {
             case 0:
               changeStatusMessage('error', request.status + ': Нет ответа от сервера!'); // no responce
               break;
             case 400:
-              changeStatusMessage('error', request.status + ': Плохой запрос!'); //bad request
+              changeStatusMessage('error', request.status + ': Плохой запрос!'); // bad request
               break;
             case 403:
-              changeStatusMessage('error', request.status + ': Доступ запрещён!'); //forbidden
+              changeStatusMessage('error', request.status + ': Доступ запрещён!'); // forbidden
               break;
             case 404:
               changeStatusMessage('error', request.status + ': Страница не найдена!'); // not found
               break;
             case 500:
               changeStatusMessage('error', request.status + ': Внутрнення ошибка сервера!'); // Internal server error
+              break;
             default:
               changeStatusMessage('error', request.status + ': Какая-то ошибка!'); // some error
           }
         }
-      }
-      else {
-        if (request.readyState == OPENED) {
+      } else {
+        if (request.readyState === OPENED) {
           statusBlock.style.display = 'block';
           changeStatusMessage('loading', 'Загрузка данных...'); // выводим DIV с сообщением о загрузке данных
         }
@@ -84,5 +83,5 @@ window.load = (function (window, document) {
   return {
     load: load,
     changeStatusMessage: changeStatusMessage
-  }
+  };
 })(window, document);

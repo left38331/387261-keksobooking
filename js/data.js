@@ -1,6 +1,6 @@
 // data.js
 // модуль генерации предложений
-'use strict'
+'use strict';
 
 window.data = (function () {
   // количество предложений
@@ -25,24 +25,28 @@ window.data = (function () {
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
   /**
- * Number.prototype.format(n, x, s, c)
- * 
- * @param {*} integer n: длина десятичной части
- * @param {*} integer x: длина целой части
- * @param {*} mixed   s: разделитель секций
- * @param {*} mixed   c: десятичный разделитель
+ * Функция приведения числа к ценовому формату с разделителями
+ * @param {integer} num входное число
+ * @param {integer} intPart: длина десятичной части
+ * @param {integer} fraction: длина целой части
+ * @param {string}  sectionSplitter: разделитель секций
+ * @param {string}  frationSplitter: десятичный разделитель
+ * @return {string} отформатированная числовая строка
  */
-  Number.prototype.format = function (n, x, s, c) {
-    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-      num = this.toFixed(Math.max(0, ~~n));
+  var formatNum = function (num, intPart, fraction, sectionSplitter, frationSplitter) {
+    var re = '\\d(?=(\\d{' + (fraction || 3) + '})+' + (intPart > 0 ? '\\D' : '$') + ')';
+    num = num.toFixed(Math.max(0, ~~intPart));
 
-    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+    return (frationSplitter ? num.replace('.', frationSplitter) : num).replace(new RegExp(re, 'g'), '$&' + (sectionSplitter || ','));
   };
+
+  // var myNumber = new Number();
 
 
   /**
    * Возвращает случайный элемент из массива
    * @param {*} array Входной массив строк
+   * @return {any} случайный элемент из массива
    */
   function pickRandomElem(array) {
     return (array[Math.floor(Math.random() * array.length)]);
@@ -50,8 +54,9 @@ window.data = (function () {
 
   /**
    * Возвращает случайное целое число между min (включительно) и max (включительно)
-   * @param {*} min 
-   * @param {*} max 
+   * @param {*} min минимальное число
+   * @param {*} max максимальное число
+   * @return {integer} случайное число из диапазона
    */
   function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -74,7 +79,7 @@ window.data = (function () {
       offer: {
         title: pickRandomElem(OFFERS_TITLES),
         address: '{' + xLocation + '}, {' + yLocation + '}',
-        price: getRandomInt(1000, 1000000).format(0, 3, ' ', '.'),
+        price: formatNum(getRandomInt(1000, 1000000), 3, ' ', '.'),
         type: pickRandomElem(HOUSE_TYPES),
         rooms: getRandomInt(1, 5),
         guests: getRandomInt(1, 50),
@@ -88,12 +93,13 @@ window.data = (function () {
         x: xLocation,
         y: yLocation
       }
-    }
+    };
   }
 
   /**
    * Функция наполнения массива объектами предложений
    * @param {*} offers array[js obj] Массив предложений по проживаню
+   * @return {object} массив предложений
    */
   function fillOfferList(offers) {
     for (var i = 0; i < NUMBER_OF_OFFERS; i++) {
@@ -105,5 +111,5 @@ window.data = (function () {
     fillOfferList: fillOfferList,
     randomOffer: makeNewOffer,
     getRandomInt: getRandomInt
-  }
+  };
 })();

@@ -1,6 +1,6 @@
 // mainPin.js
 // премещение основного pin'a и синхронизация с координатами
-'use strict'
+'use strict';
 
 window.mainPin = (function (windows, document) {
   var pinMain = document.querySelector('.pin__main');
@@ -14,8 +14,9 @@ window.mainPin = (function (windows, document) {
    * Функция перемещения pin__main в случае изменения адреса
    */
   function movePinMain() {
-    var xy = addrInput.value.match(/^\d+|\d+\b|\d+(?=\w)/g)
-      .map(function (v) { return +v; });
+    var xy = addrInput.value.match(/^\d+|\d+\b|\d+(?=\w)/g).map(function (v) {
+      return +v;
+    });
     var x = xy[0];
     var y = xy[1];
 
@@ -37,7 +38,7 @@ window.mainPin = (function (windows, document) {
     var startXY = {
       x: evt.clientX,
       y: evt.clientY
-    }
+    };
 
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
@@ -49,7 +50,7 @@ window.mainPin = (function (windows, document) {
       startXY = {
         x: moveEvt.clientX,
         y: moveEvt.clientY
-      }
+      };
       if (((pinMain.offsetLeft - shift.x) >= -37) && ((pinMain.offsetLeft - shift.x) <= 1163)) {
         pinMain.style.left = (pinMain.offsetLeft - shift.x) + 'px';
       }

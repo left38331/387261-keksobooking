@@ -1,11 +1,12 @@
 // pin.js
 // модуль для отрисовки пина и взаимодействия с ним
-'use strict'
+'use strict';
 
 window.pins = (function (window, document) {
   /**
    * Функция генерирует пин на карте (div элемент с вложенным img)
-   * @param {*} offer Объект JS, описывающий предложение по аренде 
+   * @param {*} offer Объект JS, описывающий предложение по аренде
+   * @return {function} функция
    */
   function renderPin(offer) {
     var pinElement = document.createElement('div');
@@ -26,5 +27,5 @@ window.pins = (function (window, document) {
   }
   return {
     renderPin: renderPin
-  }
+  };
 })(window, document);
