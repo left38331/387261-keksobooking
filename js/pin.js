@@ -25,6 +25,6 @@ window.pins = (function (window, document) {
     return pinElement;
   }
   return {
-    renderPin : renderPin
+    renderPin: renderPin
   }
 })(window, document);

@@ -55,9 +55,9 @@ window.mainPin = (function (windows, document) {
       }
       if (((pinMain.offsetTop - shift.y) >= 0) && ((pinMain.offsetTop - shift.y) <= 606)) {
         pinMain.style.top = (pinMain.offsetTop - shift.y) + 'px';
-        
-      }      
-      
+
+      }
+
       setAddress(pinMain.offsetLeft, pinMain.offsetTop);
     }
 
