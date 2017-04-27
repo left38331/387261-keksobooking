@@ -102,8 +102,8 @@ window.data = (function () {
     return offers;
   }
   return {
-    fillOfferList : fillOfferList,
-    randomOffer : makeNewOffer,
+    fillOfferList: fillOfferList,
+    randomOffer: makeNewOffer,
     getRandomInt: getRandomInt
   }
 })();
