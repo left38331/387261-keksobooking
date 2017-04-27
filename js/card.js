@@ -1,6 +1,6 @@
 // card.js
 // модуль отрисовки элемента на карточке
-'use strict'
+'use strict';
 
 window.card = (function (window, document) {
   // Шаблон для панели с информацией по жилью
@@ -8,6 +8,8 @@ window.card = (function (window, document) {
 
   /**
    * Передать русское название типа жилья
+   * @param {*} offerType английское название жилья
+   * @return {string} русской название жилья
    */
   function translateOfferType(offerType) {
     switch (offerType) {
@@ -20,7 +22,8 @@ window.card = (function (window, document) {
 
   /**
    * Перевод массива опций жилья из [string] в фрагмент из HTML [<span>]
-   * @param {*} string features массив опций жилья
+   * @param {[string]} features массив опций жилья
+   * @return {fragment}
    */
   function features2HTML(features) {
     var fragment = document.createDocumentFragment();
@@ -38,30 +41,30 @@ window.card = (function (window, document) {
       var photoElement = document.createElement('img');
       photoElement.setAttribute('src', photos[i]);
       photoElement.setAttribute('alt', 'Lodge photo');
-      photoElement.setAttribute('width','52');
-      photoElement.setAttribute('height','42');
+      photoElement.setAttribute('width', '52');
+      photoElement.setAttribute('height', '42');
       fragment.appendChild(photoElement);
     }
     return fragment;
   }
-   
+
   /**
    * Функция создания текстового описания для карточки по жилью на основе js объекта
    * @param {object} deal Объект, описывающий предложение по жилью
-   */ 
+   */
   function prepareFields(deal) {
     return {
       title: deal.offer.title,
       address: deal.offer.address,
       price: deal.offer.price + ' ₽/ночь',
       type: translateOfferType(deal.offer.type),
-      guestsRooms: 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + ((deal.offer.rooms === 1) ? ' комнате': ' комнатах'),
+      guestsRooms: 'Для ' + deal.offer.guests + ' гостей в ' + deal.offer.rooms + ((deal.offer.rooms === 1) ? ' комнате' : ' комнатах'),
       checkInTime: 'Заезд после ' + deal.offer.checkin + ', выезд до ' + deal.offer.checkout,
       features: features2HTML(deal.offer.features),
       description: deal.offer.description,
       photos: photos2HTML(deal.offer.photos)
-     }
-   }
+    }
+  }
 
   /**
    * Генератор HTML из шаблона на основе JS объекта предложения
@@ -86,7 +89,7 @@ window.card = (function (window, document) {
   function prepareOfferParams(deal, cb) {
 
     var dealText = prepareFields(deal);
-    
+
     cb({
       title: dealText.title,
       address: dealText.address,
@@ -101,7 +104,7 @@ window.card = (function (window, document) {
   }
 
   return {
-    renderOffer : renderOffer,
+    renderOffer: renderOffer,
     prepareOfferParams: prepareOfferParams,
     translateOfferType: translateOfferType
   }
