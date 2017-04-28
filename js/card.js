@@ -27,24 +27,24 @@ window.card = (function (window, document) {
    */
   function features2HTML(features) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < features.length; i++) {
+    features.forEach(function (item) {
       var featureElement = document.createElement('span');
-      featureElement.className = 'feature__image feature__image--' + features[i];
+      featureElement.className = 'feature__image feature__image--' + item;
       fragment.appendChild(featureElement);
-    }
+    });
     return fragment;
   }
 
   function photos2HTML(photos) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < photos.length; i++) {
+    photos.forEach(function (item) {
       var photoElement = document.createElement('img');
-      photoElement.setAttribute('src', photos[i]);
+      photoElement.setAttribute('src', item);
       photoElement.setAttribute('alt', 'Lodge photo');
       photoElement.setAttribute('width', '52');
       photoElement.setAttribute('height', '42');
       fragment.appendChild(photoElement);
-    }
+    });
     return fragment;
   }
 

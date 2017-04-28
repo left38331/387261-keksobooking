@@ -17,6 +17,7 @@ window.filter = (function (window, document) {
   }
 
   function onFilterChange() {
+    window.addClass(window.dialogForm, 'invisible');
     window.debounce(showPins);
   }
 
@@ -87,14 +88,13 @@ window.filter = (function (window, document) {
     // фильтруем по желаемым опциям
     filteredList = filteredList.filter(function (item) {
       var desiredFeatures = []; // массив желаемых опций по жилью
-      for (var i = 0; i < features.length; i++) {
-        if (features[i].childNodes[1].checked) {
-          desiredFeatures.push(features[i].childNodes[1].defaultValue);
+      Array.prototype.forEach.call(features, function (element) {
+        if (element.childNodes[1].checked) {
+          desiredFeatures.push(element.childNodes[1].defaultValue);
         }
-      }
-      if (desiredFeatures.length === 0) {
-        return true;
-      } else if (compareFeatures(item.offer.features, desiredFeatures)) {
+      });
+      // если опции не важны или совпадают с набором доступных, то предложение устраивает
+      if ((desiredFeatures.length === 0) || (compareFeatures(item.offer.features, desiredFeatures))) {
         return true;
       }
       return false;
@@ -106,12 +106,8 @@ window.filter = (function (window, document) {
     // если есть что отрисовать, то отрисовываем
     if (filteredList.length > 0) {
       statusBlock.style.display = 'none';
-      // активируем отображение карточки для жилья
-      window.removeClass(window.dialogForm, 'invisible');
       window.init(filteredList);
     } else {
-      // прячем ранее отображенную карточку жилья
-      window.addClass(window.dialogForm, 'invisible');
       statusBlock.style.display = 'block';
       window.load.changeStatusMessage('nodata', 'Нет данных для отображения');
     }
@@ -126,9 +122,9 @@ window.filter = (function (window, document) {
 	 */
   function compareFeatures(mainArray, subArray) {
     var isOK = true;
-    for (var i = 0; i < subArray.length; i++) {
-      isOK = isOK && mainArray.includes(subArray[i]);
-    }
+    subArray.forEach(function (item) {
+      isOK = isOK && mainArray.includes(item);
+    });
     return isOK;
   }
 

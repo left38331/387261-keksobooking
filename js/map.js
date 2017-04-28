@@ -33,9 +33,9 @@ var threeRandomOffers = [];
 // --------------------------------------------------------------
 // Делаем обработчики событий
 // --------------------------------------------------------------
-var dialogClose = document.querySelector('.dialog__close');
 var dialogForm = document.querySelector('.dialog');
-var pinElements = document.getElementsByClassName('pin');
+var dialogClose = dialogForm.querySelector('.dialog__close');
+var pinElements = pinListElement.getElementsByClassName('pin');
 var clickedElement = null; // объявляем выбранный элемент на странице (пин)
 var ENTER_KEY_CODE = 13;
 var ESC_KEY_CODE = 27;
@@ -45,45 +45,24 @@ var ESC_KEY_CODE = 27;
  * @param {object} offers масиив предложений
  */
 function init(offers) {
-
-  window.card.prepareOfferParams(offers[0], window.showCard.showCard);
-
-  dialogTitle.querySelector('img').src = offers[0].author.avatar;
-
   // Отрисовываем пины случайных предложений на карте (класс '.tokyo__pin-map')
   pinListElement.appendChild(fillFragment(offers));
 
-  // Добавляем класс 'pin--active' первому пину, потому что он отображается в начале
-  pinElements[1].classList.add('pin--active');
-
   clickedElement = pinElements[1]; // текущий выбранный элемент - первый
 
-  document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
-
   // добавляем EventListener на каждый из пинов (class='pin')
-  for (var i = 0; i < pinElements.length; i++) {
-    if (!pinElements[i].classList.contains('pin__main')) {
-      pinElements[i].addEventListener('click', function (evt) {
+  Array.prototype.forEach.call(pinElements, function (item) {
+    if (!item.classList.contains('pin__main')) {
+      item.addEventListener('click', function (evt) {
         pinClickHandler(offers, evt);
       }
         , false);
-      pinElements[i].addEventListener('keydown', function (evt) {
+      item.addEventListener('keydown', function (evt) {
         if (isActivationEvent(evt)) {
           pinClickHandler(offers, evt);
         }
       });
     }
-  }
-
-  // EventListener для закрытия панели описания объекта
-  dialogClose.addEventListener('click', function () {
-    dialogForm.style.display = 'none';
-
-    // убираем выделение с активного пина, но только если такой существует
-    if (clickedElement) {
-      clickedElement.classList.remove('pin--active');
-    }
-
   });
 } // end of init ()
 
@@ -118,11 +97,14 @@ function pinClickHandler(offers, evt) {
       // обновляем панель с информацией по объекту
       window.card.prepareOfferParams(offers[i - 1], window.showCard.showCard);
       dialogTitle.querySelector('img').src = offers[i - 1].author.avatar;
+      break;
     }
   }
 
   window.removeClass(dialogForm, 'invisible');
   document.addEventListener('keydown', onEscPress); // добавляет EventListener на ESC
+  // EventListener для закрытия панели описания объекта
+  dialogClose.addEventListener('click', onDialogPanelClose);
 } // end of pinClickHandler(evt)
 
 /**
@@ -130,9 +112,18 @@ function pinClickHandler(offers, evt) {
  * @param {*} evt событие
  */
 function onEscPress(evt) {
+  // debugger;
   if (evt.keyCode === ESC_KEY_CODE) {
     closeDialogPanel();
+    document.removeEventListener('keydown', onEscPress); // убираем EventListener на ESC
   }
+}
+
+function onDialogPanelClose() {
+  // debugger;
+  closeDialogPanel();
+  clickedElement.classList.remove('pin--active');
+  dialogClose.removeEventListener('click', onDialogPanelClose);
 }
 
 /**
@@ -141,12 +132,21 @@ function onEscPress(evt) {
 function closeDialogPanel() {
   window.addClass(dialogForm, 'invisible');
   clickedElement.classList.remove('pin--active');
-  document.removeEventListener('keydown', onEscPress); // убираем EventListener на ESC
 }
 
 
 function isActivationEvent(evt) {
   return evt.keyCode === ENTER_KEY_CODE;
+}
+
+/**
+ * Возвращает случайное целое число между min (включительно) и max (включительно)
+ * @param {*} min минимальное число
+ * @param {*} max максимальное число
+ * @return {integer} случайное число из диапазона
+ */
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
@@ -156,7 +156,7 @@ function isActivationEvent(evt) {
 function getThreeRandomOffers(offers) {
   var slicedOffers = offers.slice(); // копия исходного массива
   for (var i = 0; i <= 2; i++) {
-    var randNum = window.data.getRandomInt(0, slicedOffers.length - 1); // генерируем случайно число
+    var randNum = getRandomInt(0, slicedOffers.length - 1); // генерируем случайно число
     threeRandomOffers.push(slicedOffers[randNum]); // вставляем случайный элемент в новый массив из трёх предложений
     slicedOffers.splice(randNum, 1); // удалём выбранный элемент из копии предложений
   }
