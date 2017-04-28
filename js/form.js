@@ -6,12 +6,13 @@ window.form = (function (window, document) {
   // -----------------------------------------------------------------
   // Проверка правильности введённых данных
   // -----------------------------------------------------------------
-  var checkinSelectElements = document.querySelector('#time');
-  var checkoutSelectedElements = document.querySelector('#timeout');
-  var priceElement = document.querySelector('#price');
-  var typeElement = document.querySelector('#type');
-  var roomNumOptions = document.querySelector('#room_number');
-  var capacityOptions = document.querySelector('#capacity');
+  var formContent = document.querySelector('.form__content');
+  var checkinSelectElements = formContent.querySelector('#time');
+  var checkoutSelectedElements = formContent.querySelector('#timeout');
+  var priceElement = formContent.querySelector('#price');
+  var typeElement = formContent.querySelector('#type');
+  var roomNumOptions = formContent.querySelector('#room_number');
+  var capacityOptions = formContent.querySelector('#capacity');
 
   function init() {
 
@@ -32,7 +33,8 @@ window.form = (function (window, document) {
       var price = e1.value;
       if ((price < 10000) && (e2.selectedIndex === 2)) { // если цена < 10000 и дворец
         e2.selectedIndex = 0; // устанавливаем квартиру
-      } else if ((price < 1000) && (e2.selectedIndex === 0)) { // если цена < 1000 и квартира
+      }
+      if ((price < 1000) && (e2.selectedIndex === 0)) { // если цена < 1000 и квартира
         e2.selectedIndex = 1; // устанавливаем в лачугу
       }
     }
@@ -43,19 +45,23 @@ window.form = (function (window, document) {
      * @param {*} e2 DOM элемент 2
      */
     function syncType2Price(e1, e2) {
-      var accomodationType = e1.value;
-      if (accomodationType === 'Лачуга') {
-        e2.placeholder = 'от 0 р.';
-      } else if (accomodationType === 'Квартира') {
-        e2.placeholder = 'от 1000 р.';
-        if (e2.value < 1000 && e2.value !== '') {
-          e2.value = 1000;
-        }
-      } else { // if accomodationType === 'Дворец'
-        e2.placeholder = 'от 10000 р.';
-        if (e2.value < 10000 && e2.value !== '') {
-          e2.value = 10000;
-        }
+      switch (e1.value) {
+        case 'Лачуга':
+          e2.placeholder = 'от 0 р.';
+          break;
+        case 'Квартира':
+          e2.placeholder = 'от 1000 р.';
+          if (e2.value < 1000 && e2.value !== '') {
+            e2.value = 1000;
+          }
+          break;
+        case 'Дворец':
+          e2.placeholder = 'от 10000 р.';
+          if (e2.value < 10000 && e2.value !== '') {
+            e2.value = 10000;
+          }
+          break;
+        default:
       }
     }
 
@@ -65,12 +71,7 @@ window.form = (function (window, document) {
      * @param {*} e2 DOM элемент 2
      */
     function syncCapacity2roomNum(e1, e2) {
-      var only1room = (e1.selectedIndex === 1) ? true : false;
-      if (only1room) {
-        e2.selectedIndex = 0; // не для гостей
-      } else {
-        e2.selectedIndex = 1; // установить в 2 комнаты
-      }
+      e2.selectedIndex = (e1.selectedIndex === 1) ? 0 : 1; // если 1 комната, то e2.selectedIndex = 0 - "Не для гостей", в противном случае установить в "2 комнаты"
     }
 
     /**
@@ -79,12 +80,7 @@ window.form = (function (window, document) {
      * @param {*} e2 DOM элемент 2
      */
     function syncRoomNum2Capacity(e1, e2) {
-      var guestsOK = (e1.selectedIndex === 0) ? false : true;
-      if (guestsOK) {
-        e2.selectedIndex = 0; // для 3 гостей
-      } else {
-        e2.selectedIndex = 1; // не для гостей
-      }
+      e2.selectedIndex = (e1.selectedIndex === 0) ? 1 : 0;
     }
 
     // Синхронизируем разок на старте, чтобы сразу правильно отображать
