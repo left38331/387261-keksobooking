@@ -1,5 +1,6 @@
 // img-loader.js
 // модуль для подгрузки аватарки и картинок
+'use strict';
 (function () {
   var FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
 
@@ -54,9 +55,8 @@
 
       if (picNum === 15) {
         break;
-      }      
+      }   
     }
-  });  
-
+  });
 
 })();
