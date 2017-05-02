@@ -182,10 +182,20 @@ select option:hover {
 
 .upload input {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     opacity: 0;
+    top: 0px;
+    left: 0px;
     width:100%;
     height:100%;
+}
+
+.upload span {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    opacity: 1;
 }
 
 .upload:hover {
