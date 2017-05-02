@@ -45,10 +45,10 @@
       if (matches) {
         var reader = new FileReader();
 
-        reader.addEventListener('load', function () {
-          photoPreview[picNum].firstChild.src = reader.result;
+        reader.addEventListener('load', function (personalReader) {
+          photoPreview[picNum].firstChild.src = personalReader.result;
           picNum = picNum + 1;
-        });
+        }.bind(null, reader));
 
         reader.readAsDataURL(files[i]);
       }
